@@ -1,0 +1,42 @@
+/*.operation-wrapper {*/
+/*    width: 1600px;*/
+/*  display: flex;*/
+/*  justify-content: center; !* 水平居中 *!*/
+/*  align-items: center; !* 垂直居中 *!*/
+/*  height: 100vh;*/
+/*  }*/
+  .el-main{
+    padding: 0px 16px !important;
+    height: calc(100vh - 61px);
+    overflow-y: hidden;
+    height: 1400px;
+    width: 1630px;
+  }
+  .el-aside .el-scrollbar__wrap {
+      overflow-x: hidden;
+  }
+  .el-aside {
+      height: calc(100vh - 61px);
+       overflow: hidden;
+    }
+  .el-header {
+    height:61px;
+  }
+
+   .top-box{
+      height: 60px;
+      display: flex;
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #eeeeee;
+     justify-content: flex-start !important;
+    }
+    .top-box-i{
+      width: 32px;
+      height: 32px;
+      font-size: 24px;
+      margin: 16px 10px 0 15px;
+      color: #000000;
+    }
+    .el-menu--horizontal .el-menu--popup .el-submenu__title{
+      color: #FFFFFF!important;
+    }

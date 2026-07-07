@@ -1,0 +1,226 @@
+.title-front{
+    margin-top: 50px;
+    font-size: 40px !important;
+}
+.card5{
+  height: auto;
+  width: 100%;
+}
+.font-type3{
+  margin-left: 50px;
+  font-size: 30px !important;
+  width: 259px;
+}
+.font-type4{
+  margin-left: 30px;
+  font-size: 20px !important;
+  width: 259px;
+}
+.font-type5{
+  margin-top: 50px;
+  margin-left: 10%;
+  font-size: 25px !important;
+  width: 400px;
+  line-height:30px;
+}
+.font-type6{
+  width: 1160px;
+  font-size: 18px;
+  margin-left: 65px;
+}
+.font-type8{
+  width: 350px;
+  font-size: 18px;
+  margin-top: 25px;
+}
+
+
+/* 表格ui */
+.item .item__input {
+  display: none;
+  width: 80px;
+}
+/* 调整elementUI中样式 如果不需要调整请忽略 */
+.item .item__input .el-input__inner {
+  height: 24px !important;
+}
+/* 调整elementUI中样式 如果不需要调整请忽略 */
+.item .item__input .el-input__suffix i {
+  font-size: 12px !important;
+  line-height: 26px !important;
+}
+.item .item__txt {
+  box-sizing: border-box;
+  line-height: 24px;
+  padding: 0 9px;
+  color: white;
+}
+/* 按钮样式 */
+.proovr-collect__tags {
+   margin-top: -5px;
+   display: -ms-flexbox;
+   display: flex;
+   -ms-flex-wrap: wrap;
+   flex-wrap: wrap;
+   margin-bottom: -8px;
+}
+.proovr-collect__tag {
+   transition: color .3s ease-in-out,background .3s ease-in-out;
+}
+.proovr-collect__tag {
+   border-radius: 15px;
+   line-height: 40px;
+   padding: 0 12px;
+   font-size: 15px;
+   background: #d4e3fc;
+   margin: 6px 8px 8px 0;
+   cursor: pointer;
+   color: #4b5b76;
+}
+.proovr-collect__tag:hover {
+  color: #fff;
+  background: #0052d9
+}
+
+.proovr1-collect__tags {
+  margin-top: 12px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+.proovr1-collect__tag {
+  transition: color .3s ease-in-out,background .3s ease-in-out;
+}
+.proovr1-collect__tag {
+  border-radius: 15px;
+  line-height: 40px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #206686;
+  margin: 6px 8px 8px 0;
+  cursor: pointer;
+  color: #79FDFF;
+}
+.proovr1-collect__tag:hover {
+  color: #fff;
+  background: #075578
+}
+.proovr2-collect__tag {
+  transition: color .3s ease-in-out,background .3s ease-in-out;
+}
+.proovr2-collect__tag {
+  border-radius: 15px;
+  line-height: 40px;
+  padding: 0 12px;
+  font-size: 15px;
+  background: #00122c;
+  margin: 1px 8px 1px 0;
+  cursor: pointer;
+  color: #00122c;
+}
+.proovr2-collect__tag:hover {
+  color: #00122c;
+  background:#00122c;
+}
+.custom-input {
+  color: white;
+}
+.el-input__suffix {
+  margin-top: 9px;
+}
+.el-input {
+
+  height: 52px;
+
+  border-radius: 8px;
+}
+.el-input__inner {
+  height: 44px;
+  background: #1e3658;
+  font-size: 14px;
+  /*font-family: 'PingFangSC-Regular', 'PingFang SC'; !* 字体名称应用引号 *!*/
+  font-weight: 400;
+  color: white;
+  line-height: 40px; /* 设置与输入框高度相同的行高 */
+  padding-top: 0; /* 可以进一步确保垂直居中 */
+  padding-bottom: 0; /* 可以进一步确保垂直居中 */
+}
+
+.card5_1{
+  height: auto;
+  width: 1280px;
+  border-radius: 20px; /* 设置圆角为10像素 */
+  background-color: #00122c;
+  border: 2px solid #064f6f;
+}
+.card5_2{
+  height: auto;
+  width: 1280px;
+  border-radius: 20px; /* 设置圆角为10像素 */
+  background-color: #00122c;
+  border: 2px solid #064f6f;
+}
+
+
+/* General button style (reset) */
+.btn {
+  line-height: 40px;
+  border: none;
+  font-family: inherit;
+  color: #79FDFF;
+  cursor: pointer;
+  padding: 0 8px;
+  font-size: 15px;
+  background: #206686;
+  margin: 6px 8px 8px 0;
+  /*display: inline-block;*/
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 400;
+  outline: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  width: 180px;
+}
+
+.btn:after {
+  /*border-radius: 10px;*/
+  content: '';
+  position: absolute;
+  z-index: -1;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.btn:before,
+/* Button 1 */
+.btn-1 {
+  color: #79FDFF;
+}
+.btn-1b:after {
+  width: 100%;
+  height: 0;
+  top: 0;
+  left: 0;
+  background: #79FDFF;
+}
+
+.btn-1b:hover,
+.btn-1b:active {
+  color:#206686;
+}
+
+.btn-1b:hover:after,
+.btn-1b:active:after {
+  height: 100%;
+}
+
+
+
+
+
+
