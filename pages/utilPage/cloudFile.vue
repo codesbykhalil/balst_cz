@@ -2,7 +2,7 @@
   <div>
     <el-dialog title="云端文件" :visible.sync="dialogVisibles" width="1000px" @close="handleDialogClose">
         <el-table
-        :data="tableData"
+        :data="pagedTableData"
         v-loading="loading"
         style="width: 1000px">
         <el-table-column
@@ -38,10 +38,24 @@
           </template>
         </el-table-column>
         </el-table>
+        <el-pagination
+          v-if="tableData.length > pageSize"
+          class="cloud-file-pagination"
+          background
+          layout="prev, pager, next, total"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="tableData.length"
+          @current-change="handlePageChange">
+        </el-pagination>
     </el-dialog>
   </div>
 </template>
-<style>
+<style scoped>
+.cloud-file-pagination {
+  margin-top: 16px;
+  text-align: right;
+}
 </style>
 <script>
 import cloudFileApi from '@/api/cloudFile.js'
@@ -90,9 +104,17 @@ const fixedCloudUserId = "1810969334082240513";
         dialogVisibles:false,
         loading: false,
         tableData: [],
+        currentPage: 1,
+        pageSize: 10,
         projectData: null,
         id:null,      //获取用户id
       };
+    },
+    computed: {
+      pagedTableData() {
+        const start = (this.currentPage - 1) * this.pageSize;
+        return this.tableData.slice(start, start + this.pageSize);
+      }
     },
     methods: {
       handleDialogClose() {
@@ -103,6 +125,7 @@ const fixedCloudUserId = "1810969334082240513";
         this.loading = true;
         cloudFileApi.getAllData(fixedCloudUserId).then(response => {
           const list = this.getResponseList(response);
+          this.currentPage = 1;
           this.tableData = list.map((item) => {
             return {
               ...item,
@@ -129,6 +152,9 @@ const fixedCloudUserId = "1810969334082240513";
           return response.data.data;
         }
         return [];
+      },
+      handlePageChange(page) {
+        this.currentPage = page;
       },
       getExcavationName(excavationCode) {
         const excavationMap = {
