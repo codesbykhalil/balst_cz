@@ -60,8 +60,35 @@
 <script>
 import cloudFileApi from '@/api/cloudFile.js'
 import getProjectApi from '@/api/getProject.js'
+import cookie from 'js-cookie'
 import {eventBus} from "../../plugins/nuxt-elementui";
 const fixedCloudUserId = "1810969334082240513";
+const projectDetailFields = [
+  "id",
+  "projectName",
+  "excavationCode",
+  "rockId",
+  "lithology",
+  "ucs",
+  "structureScore",
+  "structuralPlaneScore",
+  "buriedDeep",
+  "initialGroundStress",
+  "holeDiameter",
+  "holeLength",
+  "explosiveDensity",
+  "d",
+  "chargeType",
+  "offsetX",
+  "offsetY",
+  "explosivityIndex",
+  "rockLevel",
+  "rockLEvel",
+  "totalExplosiveAmount",
+  "holeNum",
+  "createTime",
+  "updateTime"
+];
   export default {
     props: {
       dialogVisible: {
@@ -167,55 +194,115 @@ const fixedCloudUserId = "1810969334082240513";
         return excavationMap[excavationCode] || excavationCode || "";
       },
       importProject(val) {
-        if (!val) {
-          return;
-        }
-        //导入项目信息
-        this.projectData = val;
-        // console.log("projectData"+JSON.stringify(this.projectData))
-        let router_path = this.$route.path
-
-        if(val.type=="全断面楔形掏槽"){
-          if(router_path!='/qdmdl_x'){
-            alert("将跳转至全断面楔形掏槽页面")
-            window.location.href =  "/qdmdl_x"
-          }
-        }
-        else if(val.type=="全断面直孔掏槽"){
-          alert("将跳转至全断面直孔掏槽页面")
-          window.location.href =  "/qdmdl_s"
-        }
-        else if(val.type=="分台阶法楔形掏槽" || val.type=="分台阶法楔形掏槽下台阶"){
-          if(router_path!='/stjdl'){
-            alert("将跳转至分台阶法楔形掏槽页面")
-            window.location.href =  "/stjdl"
-          }
-        }
-        else if(val.type=="分台阶法"){
-          alert("将跳转至分台阶法页面")
-        }
-        if(this.projectData!=null)
-          eventBus.$emit('cloudFiles', this.projectData);
-        else
-          this.$message({
-              type: 'error',
-              message: "该文件不存在！",
-              duration: 6000,
-              offset: 140
-            })
-
-
-        cloudFileApi.getAllHole(this.projectData.id).then(response => {
-          // console.log("getAllHole"+JSON.stringify(response.data))
-          eventBus.$emit('cloudFileHoles', response.data.map);
-        }).catch(() => {
+        if (!val || !val.id) {
           this.$message({
             type: 'error',
-            message: "炮孔数据获取失败！",
+            message: "该文件不存在！",
             duration: 6000,
             offset: 140
           })
+          return;
+        }
+        this.loading = true;
+        cloudFileApi.getProject(val.id).then(response => {
+          const projectDetail = this.getProjectDetail(response);
+          if(!projectDetail || !projectDetail.id){
+            throw new Error("empty project detail");
+          }
+          this.projectData = this.filterProjectDetail(projectDetail);
+          this.projectData.type = this.getExcavationName(this.projectData.excavationCode);
+          cookie.set("projectId", this.projectData.id);
+          return cloudFileApi.getAllHole(this.projectData.id);
+        }).then(response => {
+          const holesData = response.data.map;
+          this.savePendingCloudData(this.projectData, holesData);
+          this.importToProjectPage(this.projectData, holesData);
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: "项目导入失败！",
+            duration: 6000,
+            offset: 140
+          })
+        }).finally(() => {
+          this.loading = false;
         })
+      },
+      importToProjectPage(projectData, holesData) {
+        const targetPath = this.getTargetPath(projectData);
+        if (!targetPath) {
+          this.emitCloudData(projectData, holesData);
+          this.handleDialogClose();
+          return;
+        }
+        if (this.normalizePath(this.$route.path) === this.normalizePath(targetPath)) {
+          this.emitCloudData(projectData, holesData);
+          this.handleDialogClose();
+          this.$message({
+            type: 'success',
+            message: "导入成功！",
+            duration: 2000,
+            offset: 140
+          })
+          return;
+        }
+        alert(`将跳转至${projectData.type}页面`);
+        window.location.href = targetPath;
+      },
+      normalizePath(path) {
+        if (!path || path === "/") {
+          return "/";
+        }
+        return path.replace(/\/+$/, "");
+      },
+      getTargetPath(projectData) {
+        if(projectData.type=="全断面楔形掏槽"){
+          return "/qdmdl_ld";
+        }
+        if(projectData.type=="全断面直孔掏槽"){
+          return "/qdmdl_s";
+        }
+        if(projectData.type=="分台阶法楔形掏槽" || projectData.type=="分台阶法楔形掏槽下台阶"){
+          return "/stjdl";
+        }
+        return "";
+      },
+      emitCloudData(projectData, holesData) {
+        eventBus.$emit('cloudFiles', projectData);
+        eventBus.$emit('cloudFileHoles', holesData);
+      },
+      savePendingCloudData(projectData, holesData) {
+        sessionStorage.setItem("pendingCloudProject", JSON.stringify(projectData));
+        sessionStorage.setItem("pendingCloudHoles", JSON.stringify(holesData));
+      },
+      emitPendingCloudData() {
+        const projectData = sessionStorage.getItem("pendingCloudProject");
+        const holesData = sessionStorage.getItem("pendingCloudHoles");
+        if (!projectData) {
+          return;
+        }
+        setTimeout(() => {
+          eventBus.$emit('cloudFiles', JSON.parse(projectData));
+          if (holesData) {
+            eventBus.$emit('cloudFileHoles', JSON.parse(holesData));
+          }
+          sessionStorage.removeItem("pendingCloudProject");
+          sessionStorage.removeItem("pendingCloudHoles");
+        }, 0);
+      },
+      getProjectDetail(response) {
+        if (response.data && response.data.data) {
+          return response.data.data;
+        }
+        return response.data || null;
+      },
+      filterProjectDetail(projectDetail) {
+        return projectDetailFields.reduce((detail, field) => {
+          if (projectDetail[field] !== undefined) {
+            detail[field] = projectDetail[field];
+          }
+          return detail;
+        }, {});
       },
       delProject(row){
         if (!row || !row.id) {
@@ -255,6 +342,7 @@ const fixedCloudUserId = "1810969334082240513";
       },
     },
     mounted() {
+      this.emitPendingCloudData();
     },
   };
 </script>

@@ -34,6 +34,13 @@ export default {
     }
   },
   created() {
+    eventBus.$on('cloudFiles',(data)=>{
+      this.rockId = data.rockId || this.rockId;
+      this.ucs = data.ucs || this.ucs;
+      if (data.ucs !== undefined && data.ucs !== null) {
+        this.rockstrength = Number(data.ucs) > 100000 ? Number(data.ucs) / 1000000 : data.ucs;
+      }
+    });
     // rockTypeApi.getRockType().then(response => {
     //   this.getData = response.data.data
     //
@@ -58,6 +65,9 @@ export default {
       str = (Number(str[0])+Number(str[1]))/2;
       this.rockstrength = str;
     });
+  },
+  destroyed() {
+    eventBus.$off('cloudFiles');
   },
   // mounted(){
   //   this.handlInit();

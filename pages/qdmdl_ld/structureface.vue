@@ -30,6 +30,14 @@ export default {
     }
   },
   created() {
+    eventBus.$on('cloudFiles',(data)=>{
+      if (data.structuralPlaneScore !== undefined && data.structuralPlaneScore !== null) {
+        this.structuralPlaneScore = data.structuralPlaneScore;
+        this.structuralPlaneScore14 = data.structuralPlaneScore;
+      }
+      this.rockId = data.rockId || this.rockId;
+      this.ucs = data.ucs || this.ucs;
+    });
     teamApi.getNewProject1Info().then(response => {
       this.project1Info = response.data.data;
 
@@ -67,6 +75,9 @@ export default {
       //新增
       this.rockLEvel = classifyInfo.classify;
     });
+  },
+  destroyed() {
+    eventBus.$off('cloudFiles');
   },
 //   mounted(){
 //     this.rockId= this.$route.query.rockId;

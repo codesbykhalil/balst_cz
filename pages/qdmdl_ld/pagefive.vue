@@ -36,9 +36,21 @@ export default {
     }
   },
   created() {
+    eventBus.$on('cloudFiles',(data)=>{
+      if (data.buriedDeep !== undefined && data.buriedDeep !== null) {
+        this.strength1 = data.buriedDeep;
+      }
+      if (data.initialGroundStress !== undefined && data.initialGroundStress !== null) {
+        this.strength2 = Number(data.initialGroundStress) > 100000 ? Number(data.initialGroundStress) / 1000000 : data.initialGroundStress;
+      }
+      this.sendDataToB();
+    });
     // console.log('A component created'); // 添加调试日志
     // // 调用 sendDataToB 方法，将默认值传递给 pageseven 组件
     // this.sendDataToB();
+  },
+  destroyed() {
+    eventBus.$off('cloudFiles');
   },
   mounted() {
 

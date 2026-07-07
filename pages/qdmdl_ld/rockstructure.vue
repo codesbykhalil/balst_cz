@@ -35,6 +35,14 @@ export default {
     }
   },
   created() {
+    eventBus.$on('cloudFiles',(data)=>{
+      if (data.structureScore !== undefined && data.structureScore !== null) {
+        this.structureScore = data.structureScore;
+        this.structureScore16 = data.structureScore;
+      }
+      this.rockId = data.rockId || this.rockId;
+      this.ucs = data.ucs || this.ucs;
+    });
     teamApi.getNewProject1Info().then(response => {
       this.project1Info = response.data.data;
 
@@ -80,6 +88,9 @@ export default {
       //新增
       this.rockLEvel = classifyInfo.classify;
     });
+  },
+  destroyed() {
+    eventBus.$off('cloudFiles');
   },
 }
 </script>

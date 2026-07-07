@@ -42,6 +42,14 @@ export default {
     }
   },
   created(){
+    eventBus.$on('cloudFiles',(data)=>{
+      if (data.rockLevel || data.rockLEvel) {
+        this.rockLevel = data.rockLevel || data.rockLEvel;
+      } else if (data.explosivityIndex !== undefined && data.explosivityIndex !== null) {
+        this.rockLevel = data.explosivityIndex;
+      }
+      this.indexNum = data.explosivityIndex || this.indexNum;
+    });
     eventBus.$on('dataToSendEvent',(data)=>{
       console.log("data.indexNum"+data);
       this.indexNum = data.dataToSend.indexNum;

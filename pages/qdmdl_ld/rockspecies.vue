@@ -52,6 +52,10 @@ export default {
   //   })
   // },
   created(){
+    eventBus.$on('cloudFiles',(data)=>{
+      this.rockspecies = data.lithology || this.rockspecies;
+      this.rockId = data.rockId || this.rockId;
+    });
     teamApi.getNewProject1Info().then(response => {
       console.log("classifyInfo", JSON.stringify(response.data.data));
       this.project1Info = response.data.data;
@@ -70,6 +74,9 @@ export default {
     //     }
     //   });
     // })
+  },
+  destroyed() {
+    eventBus.$off('cloudFiles');
   },
 }
 </script>
