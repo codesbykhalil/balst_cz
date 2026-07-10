@@ -62,7 +62,7 @@ import cloudFileApi from '@/api/cloudFile.js'
 import getProjectApi from '@/api/getProject.js'
 import cookie from 'js-cookie'
 import {eventBus} from "../../plugins/nuxt-elementui";
-const fixedCloudUserId = "1810969334082240513";
+const fixedCloudUserId = "2074397063014092802";
 const projectDetailFields = [
   "id",
   "projectName",
@@ -84,6 +84,7 @@ const projectDetailFields = [
   "explosivityIndex",
   "rockLevel",
   "rockLEvel",
+  "classify",
   "totalExplosiveAmount",
   "holeNum",
   "createTime",
@@ -211,10 +212,10 @@ const projectDetailFields = [
           }
           this.projectData = this.filterProjectDetail(projectDetail);
           this.projectData.type = this.getExcavationName(this.projectData.excavationCode);
-          cookie.set("projectId", this.projectData.id);
           return cloudFileApi.getAllHole(this.projectData.id);
         }).then(response => {
           const holesData = response.data.map;
+          this.rewriteProjectIdCookie(this.projectData);
           this.savePendingCloudData(this.projectData, holesData);
           this.importToProjectPage(this.projectData, holesData);
         }).catch(() => {
@@ -270,6 +271,11 @@ const projectDetailFields = [
       emitCloudData(projectData, holesData) {
         eventBus.$emit('cloudFiles', projectData);
         eventBus.$emit('cloudFileHoles', holesData);
+      },
+      rewriteProjectIdCookie(projectData) {
+        if (projectData && projectData.id) {
+          cookie.set("projectId", projectData.id);
+        }
       },
       savePendingCloudData(projectData, holesData) {
         sessionStorage.setItem("pendingCloudProject", JSON.stringify(projectData));

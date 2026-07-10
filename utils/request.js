@@ -3,10 +3,7 @@ import cookie from 'js-cookie'
 // 创建axios实例
 const service = axios.create({
 withCredentials: true,
-// baseURL: 'http://localhost:8091',
-baseURL: 'http://111.229.115.234:8089',//后端服务器ip
-// baseURL: 'http://111.229.115.234:8091',//后端服务器ip
-  // baseURL: 'http://localhost:8088',
+baseURL: 'http://111.229.115.234:8090',//后端服务器ip
 timeout: 20000, // 请求超时时间
 })
 let globalReferer = '';

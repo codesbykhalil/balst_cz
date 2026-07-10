@@ -1,7 +1,7 @@
 <template>
   <div class="card5_1">
     <h2 class=title-before
-        style="margin-top: 21px;padding-top:21px;font-size: 20px;!important
+        style="margin-top: 21px;padding-top:21px;font-size: 20px!important
           ;color: white;margin-left: 40px;">2
       岩石强度</h2><br><br>
     <h3 class="font-type7" style=" margin-top: -30px;color: white">

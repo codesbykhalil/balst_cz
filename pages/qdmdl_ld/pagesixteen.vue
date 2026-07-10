@@ -2,7 +2,7 @@
   <div class="card5_1">
     <div>
       <div style="padding-right: 20px" class="icon_title11">
-        <h2 class= title-before style="margin-top: 21px;padding-top:21px;font-size: 20px;!important;color: white;margin-left: 40px;">16  爆破方案导出</h2>
+        <h2 class= title-before style="margin-top: 21px;padding-top:21px;font-size: 20px!important;color: white;margin-left: 40px;">16  爆破方案导出</h2>
       </div>
       <!--      <div style="display: flex; align-items: center;">-->
       <!--        <div class="proovr1-collect__tags" style="padding-bottom: 12px;margin-left: 300px;margin-top: 15px">-->
@@ -107,7 +107,7 @@ export default {
       if(cookie.get("projectId")){
         //this.autoCal();
         this.projectId=cookie.get("projectId")
-        window.open("http://111.229.115.234:8089/excel/down/"+this.projectId, "_blank");
+        window.open("http://111.229.115.234:8090/excel/down/"+this.projectId, "_blank");
       }
     },
     outPut1(){

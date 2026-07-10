@@ -185,6 +185,10 @@ export default {
     this.evaluationItems.forEach(item => {
       console.log(item.data);
     });
+    eventBus.$on('cloudFiles', this.handleCloudFileImport);
+  },
+  beforeDestroy() {
+    eventBus.$off('cloudFiles', this.handleCloudFileImport);
   },
   computed: {
     transformEvaluationItems() {
@@ -217,6 +221,11 @@ export default {
     // handleUpdateScores(scores) {
     //   // 处理来自 about-view 组件的分数更新事件
     // },
+    handleCloudFileImport() {
+      this.$nextTick(() => {
+        this.analyze();
+      });
+    },
     analyze() {
       this.submitScoreData = {
         overbreak: this.evaluationItems[0].data[0].score,

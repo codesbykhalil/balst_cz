@@ -127,7 +127,7 @@ export default {
     if (process.browser) {
       if ('WebSocket' in window) {
         var cid = Math.floor(Math.random() * 100); // 随机生成客户端id
-        this.webSocket = new WebSocket("ws://111.229.115.234:8089/api/websocket/" + cid);
+        this.webSocket = new WebSocket("ws://111.229.115.234:8090/api/websocket/" + cid);
         this.initWebSocket();
         console.log('Support webSocket')
       }

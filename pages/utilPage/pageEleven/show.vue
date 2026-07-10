@@ -62,6 +62,7 @@
           0.01,
           2000);
         this.camera.position.set(10, 10, 8);//相机初始位置
+        this.camera.lookAt(0, 0, 0);
       // 创建渲染器
           this.renderer = new THREE.WebGLRenderer();
           this.renderer.setSize(container.clientWidth, container.clientHeight);
@@ -70,6 +71,8 @@
   
       //控制器
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.target.set(0, 0, 0);
+      this.controls.update();
       this.controls.addEventListener('change', this.render);
       },
   
@@ -309,11 +312,15 @@
   </script>
   <style>
   #show_11{
-    width: 1160px;
-    height:10rem;
+    width: 100%;
+    height:520px;
     background-color: #051534;
-    margin-left: -10px;
+    overflow: hidden;
     /*margin-top: -5px;*/
+  }
+
+  #show_11 canvas{
+    display: block;
   }
   </style>
   

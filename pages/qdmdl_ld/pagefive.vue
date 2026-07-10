@@ -2,7 +2,7 @@
   <div>
     <div class="card5_1">
       <h2 class=title-before
-          style="margin-top: 21px;padding-top:21px;font-size: 20px;!important
+          style="margin-top: 21px;padding-top:21px;font-size: 20px!important
           ;color: white;margin-left: 40px;">5
         隧道地应力(隧道埋深或地应力2选1填写)</h2><br><br>
       <!--        <div class="strength-div">-->

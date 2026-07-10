@@ -1,7 +1,7 @@
 <template>
   <div class="card5_1">
     <div>
-      <h2 class= title-before style="margin-top: 21px;padding-top:21px;font-size: 20px;!important;
+      <h2 class= title-before style="margin-top: 21px;padding-top:21px;font-size: 20px!important;
       color: white;margin-left: 40px;">8 开挖轮廓线</h2>
       <br/>
       <h3 style=" margin-left: 65px;
@@ -291,7 +291,7 @@ export default {
       // 获取项目ID
       this.projectId = cookie.get("projectId");
       this.cuttingObj.projectId = this.projectId;
-      
+
       // 为每条数据添加项目ID
       this.tableData = this.tableData.map((item) => {
         return{
@@ -299,10 +299,10 @@ export default {
           projectId : this.projectId
         }
       })
-      
+
       // 更新时间戳触发重绘
       this.timer = new Date().getTime()
-      
+
       // 调用后端API保存轮廓线数据
       outlineApi.saveOutline(this.tableData).then(response => {
         this.itemData = response.data

@@ -107,7 +107,7 @@ export default {
       if(cookie.get("projectId")){
         //this.autoCal();
         this.projectId=cookie.get("projectId")
-        window.open("http://111.229.115.234:8089/excel/down/"+this.projectId, "_blank");
+        window.open("http://111.229.115.234:8090/excel/down/"+this.projectId, "_blank");
       }
     },
     outPut1(){

@@ -41,21 +41,20 @@ export default {
     }
   },
   created(){
+    eventBus.$on('cloudFiles',(data)=>{
+      this.getExplosiveClass(data.rockLevel || data.rockLEvel || data.classify);
+      this.indexNum = data.explosivityIndex || this.indexNum;
+    });
     eventBus.$on('dataToSendEvent',(data)=>{
       console.log("data.indexNum"+data);
       this.indexNum = data.dataToSend.indexNum;
     })
 
-    let str = this.$route.query.dataToSend.rockLEvel
-    let obj = {rockLEvel: str}
-    console.log("岩石等级为"+JSON.stringify(str))
-    // let obj = {rockLEvel: "IV2"}
-    calculateApi.get_exp_class(obj).then(response => {
-      this.rockLevel = response.data.data;
-      console.log("岩石等级为2"+JSON.stringify(response.data))
-    })
+    const dataToSend = this.getRouteDataToSend();
+    let str = dataToSend.rockLevel || dataToSend.rockLEvel || this.$route.query.rockLevel || this.$route.query.rockLEvel;
+    this.getExplosiveClass(str);
 
-    this.indexNum = this .$route.query.dataToSend.indexNum;
+    this.indexNum = dataToSend.indexNum || this.$route.query.indexNum || this.indexNum;
   },
   destroyed() {
     eventBus.$off('dataToSendEvent');
@@ -75,6 +74,35 @@ export default {
         eventBus.$emit('index_updated',{indexNum :this.indexNum});
       },
       immediate: true
+    }
+  },
+  methods: {
+    getExplosiveClass(rockLevel) {
+      if (!rockLevel) {
+        console.warn("未读取到用于计算可爆性等级的岩石等级");
+        return;
+      }
+      let obj = {rockLEvel: rockLevel}
+      console.log("岩石等级为"+JSON.stringify(rockLevel))
+      calculateApi.get_exp_class(obj).then(response => {
+        this.rockLevel = response.data.data;
+        console.log("岩石等级为2"+JSON.stringify(response.data))
+      })
+    },
+    getRouteDataToSend() {
+      const routeData = this.$route.query.dataToSend;
+      if (!routeData) {
+        return {};
+      }
+      if (typeof routeData === 'string') {
+        try {
+          return JSON.parse(routeData);
+        } catch (error) {
+          console.warn("dataToSend 不是有效 JSON", routeData);
+          return {};
+        }
+      }
+      return routeData;
     }
   },
 

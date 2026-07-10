@@ -2,7 +2,7 @@
   <div>
     <div class="card5_1">
       <h2 class=title-before
-          style="margin-top: 21px;padding-top:21px;font-size: 20px;!important
+          style="margin-top: 21px;padding-top:21px;font-size: 20px!important
           ;color: white;margin-left: 40px;">1
         岩石种类</h2><br><br>
       <h3 class="font-type7" style=" margin-top: -30px;color: white">
@@ -96,7 +96,6 @@ export default {
   background-color: white;
 }
 .card1:hover{
-//box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   box-shadow: rgba(0, 0, 0, 0.65) 0px 8px 20px;
 }
 .title-front2{

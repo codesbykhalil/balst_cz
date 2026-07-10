@@ -1,6 +1,6 @@
 <template>
   <div class="card5_1">
-    
+
     <h2 class="title-before" style="margin-top: 21px; padding-top: 21px; font-size: 20px !important; color: white; margin-left: 40px; margin-bottom: 40px;">6 岩体可爆性</h2>
     <div style="margin-top: -30px;padding-bottom: 20px">
 
@@ -24,6 +24,7 @@
 import calculateApi from '@/api/calculate.js'
 import cookie from 'js-cookie'
 import {eventBus} from "../../plugins/nuxt-elementui";
+
 export default {
   name:"pagesix",
   data () {
@@ -43,12 +44,21 @@ export default {
   },
   created(){
     eventBus.$on('cloudFiles',(data)=>{
-      if (data.rockLevel || data.rockLEvel) {
-        this.rockLevel = data.rockLevel || data.rockLEvel;
-      } else if (data.explosivityIndex !== undefined && data.explosivityIndex !== null) {
-        this.rockLevel = data.explosivityIndex;
-      }
+      // console.log("ucs"+data.ucs);
+      this.getExplosiveClass(data.rockLevel || data.rockLEvel || data.classify);
       this.indexNum = data.explosivityIndex || this.indexNum;
+      const datas = {
+          "rockId": data.rockId,
+          "ucs": data.ucs * 1000000,
+          "structureScore": data.structureScore,
+          "structuralPlaneScore": data.structuralPlaneScore,
+          "rockLEvel": ""
+      }
+
+        calculateApi.get_exp_class(datas).then(response => {
+        this.rockLevel = response.data.data;
+        console.log("岩石等级为3"+JSON.stringify(this.rockLevel))
+      })
     });
     eventBus.$on('dataToSendEvent',(data)=>{
       console.log("data.indexNum"+data);
@@ -61,13 +71,7 @@ export default {
       console.warn("未从 route 参数中读取到 rockLevel");
       return;
     }
-    let obj = {rockLEvel: str}
-    console.log("岩石等级为"+JSON.stringify(str))
-    // let obj = {rockLEvel: "IV2"}
-    calculateApi.get_exp_class(obj).then(response => {
-      this.rockLevel = response.data.data;
-      console.log("岩石等级为2"+JSON.stringify(response.data))
-    })
+    this.getExplosiveClass(str);
 
     this.indexNum = dataToSend.indexNum || this.$route.query.indexNum || this.indexNum;
   },
@@ -92,6 +96,18 @@ export default {
     }
   },
   methods: {
+    getExplosiveClass(rockLevel) {
+      if (!rockLevel) {
+        console.warn("未读取到用于计算可爆性等级的岩石等级");
+        return;
+      }
+      let obj = {rockLEvel: rockLevel}
+      console.log("岩石等级为"+JSON.stringify(rockLevel))
+      calculateApi.get_exp_class(obj).then(response => {
+        this.rockLevel = response.data.data;
+        console.log("岩石等级为2"+JSON.stringify(response.data))
+      })
+    },
     getRouteDataToSend() {
       const routeData = this.$route.query.dataToSend;
       if (!routeData) {

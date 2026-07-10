@@ -21,7 +21,7 @@ module.exports = {
     proxy: {
         '/api': {
         changeOrigin: true,
-        target: 'http://121.4.12.141:8089', // 允许跨域的服务器地址
+        target: 'http://121.4.12.141:8090', // 允许跨域的服务器地址
         pathRewrite: {
           '^/api': ''
         }
@@ -69,7 +69,7 @@ module.exports = {
   },
   target:'server',
   server:{
-    port: 7000, // default: 3000
+    port: 7000, 
     host: '0.0.0.0' // default: localhost
   }
 }

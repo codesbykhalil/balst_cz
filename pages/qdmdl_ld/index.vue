@@ -154,18 +154,18 @@
           <div class="sidebar-right">
             <div  class="uinn-a30 bg-white"  style="height: calc(100vh - 94px);">
               <div class="timeline-background" style="height: 765px;padding-top: 30px;padding-bottom: 30px;">
-                <span style="font-size: 18px;margin-left: 20px">设计历史记录</span>
+                <!-- <span style="font-size: 18px;margin-left: 20px">设计历史记录</span> -->
                 <br>
                 <template>
                   <div class="project-history">
-<!--                    <h3 style="margin-left: 25px">云端文件记录</h3>-->
-                    <ul>
+
+                   <!-- <ul>
                       <li v-for="(project, index) in projects" :key="project.id" class="project-item" style="margin-top: 10px">
                         <span style="color: #187cb7;margin-right: 20px">{{ project.id }}</span>
                         <button @click="importProject(project.id)" style="margin-right: 20px">导入</button>
                         <button @click="deleteProject(index)" style="margin-right: 20px">X</button>
                       </li>
-                    </ul>
+                    </ul>  -->
                   </div>
                 </template>
               </div>

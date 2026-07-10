@@ -145,41 +145,44 @@ export default {
           this.tubeMir=[]
           this.auxHoleDataMir=[]
           this.timer = new Date().getTime()
-          //查询掏槽孔
-            cuttingApi.getCuttingHoles(this.projectId).then(response => {
-              this.cuttingHoles = response.data.data;
-              this.cuttingHoles.map((item) => {
-                this.vertices.push(item.x1,item.y1,0.0)
-                this.tube.push({x1:item.x1,y1:item.y1,z1:0,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:1,rolling_count:item.rolling_count})
+          Promise.all([
+            cuttingApi.getCuttingHoles(this.projectId),
+            surroundingHolesApi.readSurrounding(this.projectId),
+            auxiliaryHolesApi.readAuxHoles(this.projectId)
+          ]).then(([cuttingResponse, surroundingResponse, auxiliaryResponse]) => {
+            const verticesMir = []
+            const tubeMir = []
+            const auxHoleDataMir = []
+
+            this.cuttingHoles = cuttingResponse.data.data || [];
+            this.cuttingHoles.forEach((item) => {
+              verticesMir.push(item.x1,item.y1,0.0)
+              tubeMir.push({x1:item.x1,y1:item.y1,z1:0,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:1,rolling_count:item.rolling_count})
+            })
+
+            this.surroundingHoles = surroundingResponse.data.data || [];
+            this.surroundingHoles.forEach((item) => {
+              verticesMir.push(item.x1,item.y1,0.0)
+              tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:2})
+            })
+
+            const datas = auxiliaryResponse.data.data || [];
+            datas.forEach((item, index) => {
+              verticesMir.push(item.x1,item.y1,0.0)
+              tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:3})
+              auxHoleDataMir.push({
+                holeNum:'孔'+(index + 1), x1:item.x1, y1:item.y1,z1:item.z1, x2:item.x2, y2:item.y2,
+                z2:item.z2,
               })
             })
-            //查询周边孔
-            surroundingHolesApi.readSurrounding(this.projectId).then(response => {
-                this.surroundingHoles = response.data.data;
-                this.surroundingHoles.map((item) => {
-                  //添加周边孔
-                  this.verticesMir.push(item.x1,item.y1,0.0)
-                  this.tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:2})
-                })
-            })
-            //查询辅助孔
-            auxiliaryHolesApi.readAuxHoles(this.projectId).then(response => {
-              //回显表格
-              let datas =response.data.data;
-              let i=0;
-              datas.map((item) => {
-                i++;
-                this.verticesMir.push(item.x1,item.y1,0.0)
-                this.tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:3})
-                this.auxHoleDataMir.push({
-                  holeNum:'孔'+i, x1:item.x1, y1:item.y1,z1:item.z1, x2:item.x2, y2:item.y2,
-                  z2:item.z2,
-                })
-              })
-              this.vertices=this.verticesMir;
-              this.tube=this.tubeMir;
-              this.auxHoleData = this.auxHoleDataMir;
-            })
+
+            this.verticesMir = verticesMir;
+            this.tubeMir = tubeMir;
+            this.auxHoleDataMir = auxHoleDataMir;
+            this.vertices = verticesMir;
+            this.tube = tubeMir;
+            this.auxHoleData = auxHoleDataMir;
+          })
         }else{
           this.timer = new Date().getTime();
         }

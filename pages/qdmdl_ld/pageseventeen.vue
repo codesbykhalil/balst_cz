@@ -191,6 +191,10 @@ export default {
     this.evaluationItems.forEach(item => {
       console.log(item.data);
     });
+    eventBus.$on('cloudFiles', this.handleCloudFileImport);
+  },
+  beforeDestroy() {
+    eventBus.$off('cloudFiles', this.handleCloudFileImport);
   },
   computed: {
     transformEvaluationItems() {
@@ -259,6 +263,12 @@ export default {
       const score = this.getScore(value);
       // 更新 score 字段
       this.$set(item.data[dataIndex], 'score', score);
+    },
+
+    handleCloudFileImport() {
+      this.$nextTick(() => {
+        this.analyze();
+      });
     },
 
     analyze() {

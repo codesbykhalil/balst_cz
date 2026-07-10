@@ -1,7 +1,7 @@
 <template>
   <div class="card5_1">
     <div>
-      <h2 class= title-before style="margin-top: 21px;padding-top:21px;font-size: 20px;!important;
+      <h2 class= title-before style="margin-top: 21px;padding-top:21px;font-size: 20px!important;
       color: white;margin-left: 40px;">13 起爆网络设计</h2>
       <br/>
       <h3 class="font-type6" style="display:inline-block;color: white">控制单响药量不超过：
