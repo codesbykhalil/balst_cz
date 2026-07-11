@@ -240,45 +240,45 @@ export default {
       console.log("Updated dataToSend:", this.dataToSend);
     },
     handleButtonClick2() {
-        // cookie.set('isAutoMode', 0);
+        cookie.set('isAutoMode', 0);
         //  cookie.set('rockLEvel', 0);
-        this.$router.push({ name: 'qdmdl_ld' });
-      // if (this.isButtonDisabled) {
-      //   return; // 如果是，则直接返回，什么都不做
-      // }
-      // this.isButtonDisabled = true;
-      // //终止轮询
-      // clearInterval(this.timer);
-      // cookie.set('isAutoMode', 0);
-      // // 调用接口获取开挖方法信息
-      // let userData = new FormData();
-      // userData.append("username","czjhun")
-      // userData.append("password","czjhun.123")
-      // connAnoSerApi.info_Verify(userData).then(response => {
-      //   console.log("testData" + JSON.stringify(response.data.token))
-      //   cookie.set("testToken", response.data.token);
+        // this.$router.push({ name: 'qdmdl_ld' });
+      if (this.isButtonDisabled) {
+        return; // 如果是，则直接返回，什么都不做
+      }
+      this.isButtonDisabled = true;
+      //终止轮询
+      clearInterval(this.timer);
+      cookie.set('isAutoMode', 0);
+      // 调用接口获取开挖方法信息
+      let userData = new FormData();
+      userData.append("username","czjhun")
+      userData.append("password","czjhun.123")
+      connAnoSerApi.info_Verify(userData).then(response => {
+        console.log("testData" + JSON.stringify(response.data.token))
+        cookie.set("testToken", response.data.token);
 
-      //   let userData2 = new FormData();
-      //   userData2.append("dataType", "getWorkFaceName")
-      //   connAnoSerApi.get_Info(userData2, cookie.get("testToken")).then(response => {
-      //     let list = response.data.work_face_list;
-      //     list.map((item) => {
-      //       this.workFaceList.push({
-      //         tunnelFullName:`${item.tunnelName}${item.workAreaName}${item.workFaceName}`,
-      //         mileageList:item.mileageList})
-      //     })
-      //     console.log("project1DataList====="+JSON.stringify(this.workFaceList))
+        let userData2 = new FormData();
+        userData2.append("dataType", "getWorkFaceName")
+        connAnoSerApi.get_Info(userData2, cookie.get("testToken")).then(response => {
+          let list = response.data.work_face_list;
+          list.map((item) => {
+            this.workFaceList.push({
+              tunnelFullName:`${item.tunnelName}${item.workAreaName}${item.workFaceName}`,
+              mileageList:item.mileageList})
+          })
+          console.log("project1DataList====="+JSON.stringify(this.workFaceList))
 
-      //     this.data = this.workFaceList.map(item => ({
-      //       label : item.tunnelFullName,
-      //       children: item.mileageList.map(mileage => ({
-      //         id : mileage.mileage_id,
-      //         label : `${mileage.standardMileage}    ${mileage.mileage}`,
-      //       }))
-      //     }))
-      //   });
-      //   this.handleMode();
-      // });
+          this.data = this.workFaceList.map(item => ({
+            label : item.tunnelFullName,
+            children: item.mileageList.map(mileage => ({
+              id : mileage.mileage_id,
+              label : `${mileage.standardMileage}    ${mileage.mileage}`,
+            }))
+          }))
+        });
+        this.handleMode();
+      });
 
     },
     handleButtonClick2Old() {
