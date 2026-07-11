@@ -1,8 +1,8 @@
 <template>
 <div>
-<!--  <div class="proovr1-collect__tags" style="display: flex; align-items: center;">-->
-<!--    <span class="proovr1-collect__tag" style="margin:5px 0 20px 568px;width:80px" @click="calculate">计算成本</span>-->
-<!--  </div>-->
+ <div class="proovr1-collect__tags" style="display: flex; align-items: center;">
+   <span class="proovr1-collect__tag" style="margin:5px 0 20px 568px;width:80px" @click="calculate">计算成本</span>-->
+  </div>
   <el-table
     :data="tableData"
     ref="tableRef"

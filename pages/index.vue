@@ -24,8 +24,10 @@
                 <el-tree
                   :data="data"
                   ref="menuTree"
-                  node-key="label"
+                  node-key="treeKey"
                   :props="defaultProps"
+                  :default-expanded-keys="expandedKeys"
+                  :current-node-key="currentNodeKey"
                   @node-click="handleNodeClick"
                   accordion
                   :highlight-current="true"
@@ -106,6 +108,8 @@ export default {
       workFaceList:[],
       isButtonDisabled: false,
       data: [],
+      expandedKeys: [],
+      currentNodeKey: '',
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -162,6 +166,9 @@ export default {
     //       })
     //     }, 0)
     //   }, 60000)
+    if (process.browser && sessionStorage.getItem('homeTreeSelection')) {
+      this.handleButtonClick2();
+    }
   },
 
   methods: {
@@ -175,11 +182,46 @@ export default {
       //点击播放视频
       this.$refs.video.pause()
     },
-    handleNodeClick(data) {
+    handleNodeClick(data, node) {
       if (data.children == null){
         this.mileageId = String(data.id);
+        this.rememberHomeSelection(data, node);
         console.log(this.mileageId)
         this.handleMode();
+      }
+    },
+    rememberHomeSelection(data, node) {
+      const parentKey = node && node.parent && node.parent.data ? node.parent.data.treeKey : '';
+      this.currentNodeKey = data.treeKey;
+      this.expandedKeys = parentKey ? [parentKey] : [];
+      if (process.browser) {
+        sessionStorage.setItem('homeTreeSelection', JSON.stringify({
+          mileageId: String(data.id),
+          currentNodeKey: data.treeKey,
+          expandedKeys: this.expandedKeys
+        }));
+      }
+    },
+    restoreHomeSelection() {
+      if (!process.browser) {
+        return;
+      }
+      const selection = sessionStorage.getItem('homeTreeSelection');
+      if (!selection) {
+        return;
+      }
+      try {
+        const state = JSON.parse(selection);
+        this.mileageId = state.mileageId || '';
+        this.currentNodeKey = state.currentNodeKey || '';
+        this.expandedKeys = Array.isArray(state.expandedKeys) ? state.expandedKeys : [];
+        this.$nextTick(() => {
+          if (this.$refs.menuTree && this.currentNodeKey) {
+            this.$refs.menuTree.setCurrentKey(this.currentNodeKey);
+          }
+        });
+      } catch (error) {
+        sessionStorage.removeItem('homeTreeSelection');
       }
     },
     handleButtonClick() {
@@ -240,7 +282,7 @@ export default {
       console.log("Updated dataToSend:", this.dataToSend);
     },
     handleButtonClick2() {
-        cookie.set('isAutoMode', 0);
+        // cookie.set('isAutoMode', 0);
         //  cookie.set('rockLEvel', 0);
         // this.$router.push({ name: 'qdmdl_ld' });
       if (this.isButtonDisabled) {
@@ -270,14 +312,19 @@ export default {
           console.log("project1DataList====="+JSON.stringify(this.workFaceList))
 
           this.data = this.workFaceList.map(item => ({
+            treeKey : item.tunnelFullName,
             label : item.tunnelFullName,
             children: item.mileageList.map(mileage => ({
+              treeKey : `mileage-${mileage.mileage_id}`,
               id : mileage.mileage_id,
               label : `${mileage.standardMileage}    ${mileage.mileage}`,
             }))
           }))
+          this.restoreHomeSelection();
         });
-        this.handleMode();
+        if (this.mileageId && (!process.browser || !sessionStorage.getItem('homeTreeSelection'))) {
+          this.handleMode();
+        }
       });
 
     },
@@ -571,6 +618,7 @@ export default {
             if (excavationModel === '全断面') {
               // alert(this.dataToSend.advance)
               // 跳转到 "/method1" 页面
+              // cookie.set('isAutoMode', 1);
               this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
 
             } else if (excavationModel === ('二台阶'||'台阶法')) {

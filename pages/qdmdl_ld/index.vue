@@ -11,6 +11,10 @@
               <img :src="require('assets/img/ui/picture_01.png')" style="width: 40px">
               <img :src="require('assets/img/ui/picture_02.png')" style="width: 40px;margin-left: 10px">
             </div>
+            <button class="nav-home-button" type="button" @click="back" title="返回首页">
+              <img :src="require('assets/img/ui/Group 206.png')" alt="返回首页">
+              <span>返回首页</span>
+            </button>
             <div class="header_title"><span style="color: #FFFFFF;font-size: 35px">全断面+楔形掏槽</span></div>
             <div class="left_project">
               <div class="bg_project">
@@ -35,15 +39,6 @@
               <div style="display: flex;float: right;">
                 <img :src="require('assets/img/ui/Group 192.png')"   style="margin-top: 15px;width: 32px;">
                 <span style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;line-height: 60px;color: #FFFFFF;margin: 0 20px 0 0;">{{loginInfo.username}}</span>
-                <div class="icon-container" @mouseover="showText = true" @mouseout="showText = false">
-                  <img
-                    class="icon"
-                    :src="require('assets/img/ui/Group 206.png')"
-                    alt="图标"
-                    @click="back"
-                    style="color: #000000;margin-top: 15px;width: 32px;"/>
-                  <div v-if="showText" class="text">返回首页</div>
-                </div>
                 <div class="icon-container" @mouseover="showText = true" @mouseout="showText = false">
                   <img
                     class="icon"
@@ -354,19 +349,7 @@ export default {
       }
     },
     back(){
-      var cookies = document.cookie.split(";");
-      // 遍历所有 cookie
-      for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i].trim(); // 去除前后空格
-        var eqPos = cookie.indexOf("=");
-        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-
-        // 如果 cookie 名称不是 'user_token'，则删除该 cookie
-        if (name !== 'user_token') {
-          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-        }
-      }
-      window.location.href = "/"
+      this.$router.push({ path: '/' })
     },
 
     logout() {
@@ -642,6 +625,40 @@ body {
   left: 40px;
   align-items: center;
   justify-content: center;
+}
+.nav-home-button {
+  position: absolute;
+  top: 14px;
+  left: 155px;
+  height: 44px;
+  min-width: 118px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(67, 198, 255, 0.8);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(25, 114, 182, 0.92), rgba(5, 44, 93, 0.95));
+  box-shadow: 0 0 12px rgba(30, 174, 255, 0.55), inset 0 0 8px rgba(125, 220, 255, 0.32);
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.nav-home-button img {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+.nav-home-button:hover {
+  transform: translateY(-1px);
+  border-color: #78dcff;
+  box-shadow: 0 0 18px rgba(54, 195, 255, 0.75), inset 0 0 10px rgba(125, 220, 255, 0.42);
+}
+.nav-home-button:active {
+  transform: translateY(0);
 }
 .header_title{
   display: flex;

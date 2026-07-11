@@ -22,6 +22,9 @@
                 width: 400px;color: white;margin-bottom: 15px">&ensp;<strong>设计单耗值为:</strong><br/>
           <el-input style="width:1160px;margin-left: 10px;margin-top: 10px" v-model="unitCon" readonly></el-input>
         </h3>
+        <div  style="display: flex; align-items: center;">
+        <span @click="calculate" class="draw_button" style="margin:30px 0 20px 595px">计算</span>
+        </div>
       </div>
     </div>
   </div>

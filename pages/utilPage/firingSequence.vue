@@ -1,6 +1,6 @@
 <template>
   <div>
-    <canvas id="two" style="width: 1060px;height:520px;background-color: #01366a;"></canvas>
+    <canvas ref="firingCanvas" id="two" style="width: 1060px;height:520px;background-color: #01366a;"></canvas>
   </div>
 </template>
 
@@ -44,10 +44,7 @@ export default {
         this.vertices = newV;
         //获取了孔口坐标xyz数组
         // console.log("show2 get =============this.getVertices   "+JSON.stringify(this.getVertices));
-        this.canvas = document.getElementById("two")
-        this.canvas.addEventListener('mousewheel', this.onMousewheel);
-        if (this.canvas.getContext) {
-          this.ctx = this.canvas.getContext("2d");
+        if (this.initCanvas()) {
           this.clear();
           this.draw();
         }
@@ -57,13 +54,26 @@ export default {
     getSequence:{
       handler(newV) {
         this.sequence = newV;
-        this.clear();
-        this.draw();
+        if (this.initCanvas()) {
+          this.clear();
+          this.draw();
+        }
       },
       deep: true,
     },
   },
   methods: {
+    initCanvas() {
+      this.canvas = this.$refs.firingCanvas || document.getElementById("two")
+      if (!this.canvas || !this.canvas.getContext) {
+        return false;
+      }
+      if (!this.ctx) {
+        this.ctx = this.canvas.getContext("2d");
+        this.canvas.addEventListener('mousewheel', this.onMousewheel);
+      }
+      return !!this.ctx;
+    },
     onMousewheel(e) {
       e.preventDefault();
 
@@ -100,6 +110,9 @@ export default {
       this.draw();
     },
     clear() {
+      if (!this.canvas || !this.ctx) {
+        return;
+      }
       let width = this.canvas.height=700;
       let height = this.canvas.width=1200;
       this.ctx.translate(width/1.15, height/3.2);
@@ -107,6 +120,9 @@ export default {
       this.ctx.scale(this.scale, this.scale);
     },
     draw() {
+      if (!this.ctx || !Array.isArray(this.vertices) || !this.vertices.length) {
+        return;
+      }
       let r=3.5,mul=20;
       this.ctx.strokeStyle = "rgba(0,255,0,0.5)";
       this.ctx.font = "bold 4px HarmonyOS Sans SC"; //字体大小 首选字体 备选字体

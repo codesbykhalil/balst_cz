@@ -103,6 +103,9 @@ export default {
         this.start = (newV - 1) * this.pageList
         this.end = (newV + 2) * this.pageList
         requestAnimationFrame(() => {
+          if (!this.tableWarp) {
+            return;
+          }
           // 计算偏移量
           this.tableWarp.style.transform = `translateY(${this.start *
           this.itemHeight}px)`
@@ -111,17 +114,23 @@ export default {
       } else {
         requestAnimationFrame(() => {
           this.tableData = this.saveDATA.slice(this.starts, this.ends)
-          this.tableWarp.style.transform = `translateY(0px)`
+          if (this.tableWarp) {
+            this.tableWarp.style.transform = `translateY(0px)`
+          }
         })
       }
     },
     holeData:{
       handler(newV) {
         this.saveDATA = []
-        this.saveDATA = newV;
+        this.saveDATA = Array.isArray(newV) ? newV : [];
         this.$nextTick(() => {
           // 设置了滚动的盒子
-          this.tableRef = this.$refs.tableRef.bodyWrapper
+          this.tableRef = this.$refs.tableRef && this.$refs.tableRef.bodyWrapper
+          if (!this.tableRef || !this.tableRef.children || !this.tableRef.children[0]) {
+            this.init();
+            return;
+          }
           /**
            * fixed-left | 主体 | fixed-right
            */
@@ -159,6 +168,9 @@ export default {
       //   console.log("this.tableData   "+JSON.stringify(this.tableData))
     },
     onScroll() {
+      if (!this.tableRef) {
+        return;
+      }
       this.scrollTop = this.tableRef.scrollTop
       this.num = Math.floor(this.scrollTop / (this.itemHeight * this.pageList))
     },

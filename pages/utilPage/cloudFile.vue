@@ -1,14 +1,33 @@
 <template>
   <div>
-    <el-dialog title="云端文件" :visible.sync="dialogVisibles" width="1000px" @close="handleDialogClose">
+    <el-dialog title="云端文件" :visible.sync="dialogVisibles" width="1100px" @close="handleDialogClose">
         <el-table
         :data="pagedTableData"
         v-loading="loading"
-        style="width: 1000px">
+        :header-cell-style="{ textAlign: 'center' }"
+        style="width: 100%">
+        <el-table-column
+            prop="workAreaText"
+            label="工区"
+            width="180">
+        </el-table-column>
         <el-table-column
             prop="id"
-            label="工程ID"
-            width="200">
+            label="项目id"
+            width="190">
+          <template slot-scope="scope">
+            <el-tooltip
+              v-if="scope.row.id"
+              :content="String(scope.row.id)"
+              placement="top">
+              <span>{{ formatProjectId(scope.row.id) }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="mileageText"
+            label="循环里程"
+            width="150">
         </el-table-column>
         <el-table-column
             prop="excavationCode"
@@ -19,19 +38,14 @@
         <el-table-column
             prop="type"
             label="开挖方式"
-            width="200">
+            width="160">
         </el-table-column>
         <el-table-column
-            prop="createTime"
-            label="创建日期"
-            width="200">
+            prop="startTimeText"
+            label="开始时间"
+            width="170">
         </el-table-column>
-        <el-table-column
-            prop="updateTime"
-            label="修改日期"
-            width="200">
-        </el-table-column>
-        <el-table-column label="操作" fixed="right" min-width="160" align="center">
+        <el-table-column label="操作" fixed="right" min-width="140" align="center">
           <template slot-scope="scope">
             <el-button size="mini" @click="importProject(scope.row)">导入</el-button>
             <el-button size="mini" type="danger" @click="delProject(scope.row)">删除</el-button>
@@ -151,15 +165,12 @@ const projectDetailFields = [
       },
       getCloudFileList() {
         this.loading = true;
-        cloudFileApi.getAllData(fixedCloudUserId).then(response => {
+        cloudFileApi.getProject1InfoList(fixedCloudUserId).then(response => {
           const list = this.getResponseList(response);
           this.currentPage = 1;
-          this.tableData = list.map((item) => {
-            return {
-              ...item,
-              type: this.getExcavationName(item.excavationCode)
-            }
-          });
+          return Promise.all(list.map((item) => this.getCloudFileRow(item)));
+        }).then(rows => {
+          this.tableData = rows;
         }).catch(() => {
           this.tableData = [];
           this.$message({
@@ -184,6 +195,45 @@ const projectDetailFields = [
       handlePageChange(page) {
         this.currentPage = page;
       },
+      getCloudFileRow(project) {
+        if (!project || !project.id) {
+          return Promise.resolve(this.buildCloudFileRow(project, null));
+        }
+        return cloudFileApi.getProject1Info(project.id).then(response => {
+          return this.buildCloudFileRow(project, this.getProject1Info(response));
+        }).catch(() => {
+          return this.buildCloudFileRow(project, null);
+        });
+      },
+      buildCloudFileRow(project, project1Info) {
+        return {
+          ...project,
+          project1Info,
+          workAreaText: this.getWorkAreaName(project1Info, project),
+          mileageText: this.getMileage(project1Info, project),
+          startTimeText: this.getStartTime(project1Info, project),
+          type: this.getExcavationName(project && project.excavationCode)
+        }
+      },
+      getProject1Info(response) {
+        if (response && response.data && response.data.data) {
+          if (Array.isArray(response.data.data)) {
+            return response.data.data[0] || null;
+          }
+          return response.data.data;
+        }
+        if (response && response.data) {
+          return response.data;
+        }
+        return null;
+      },
+      formatProjectId(projectId) {
+        const id = String(projectId || "");
+        if (id.length <= 12) {
+          return id;
+        }
+        return `${id.slice(0, 6)}...${id.slice(-6)}`;
+      },
       getExcavationName(excavationCode) {
         const excavationMap = {
           "001001": "全断面楔形掏槽",
@@ -193,6 +243,23 @@ const projectDetailFields = [
           "001005": "分台阶法楔形掏槽下台阶"
         };
         return excavationMap[excavationCode] || excavationCode || "";
+      },
+      getWorkAreaName(project1Info, project) {
+        const info = project1Info || {};
+        const file = project || {};
+        return info.tunnelFullName || info.workArea || info.workAreaName || info.workFaceName ||
+          file.workArea || file.workAreaName || file.workFaceName || file.tunnelFullName || file.projectName || "";
+      },
+      getMileage(project1Info, project) {
+        const info = project1Info || {};
+        const file = project || {};
+        return info.standardMileage || info.mileage || info.mileageName || info.mileageID || info.mileageId ||
+          file.mileage || file.standardMileage || "";
+      },
+      getStartTime(project1Info, project) {
+        const info = project1Info || {};
+        const file = project || {};
+        return info.time || info.startTime || info.start_time || info.beginTime || info.begin_time || info.createTime || file.createTime || "";
       },
       importProject(val) {
         if (!val || !val.id) {

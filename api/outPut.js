@@ -14,8 +14,8 @@ export default{
   //计算全断面楔形起爆顺序
   firingSequence(datas){
     return request({
-      url: `/firing_sequence`,
-      baseURL:'http://212.64.29.33:5000',
+      url: `blastSeq/firing-sequence`,
+      // baseURL:'http://212.64.29.33:5000',
       data: datas,
       method: 'post'
     })

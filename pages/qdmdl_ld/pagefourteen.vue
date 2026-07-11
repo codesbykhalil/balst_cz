@@ -9,9 +9,9 @@
         <div style="margin-left:66px">
           <!--          <tables/>-->
           <div>
-<!--            <div class="proovr1-collect__tags" style="display: flex; align-items: center;">-->
-<!--              <span @click="predict2()" class="proovr1-collect__tag" style="margin:20px 0 0px 470px">周边孔超挖量和爆破块度预测</span>-->
-<!--            </div>-->
+           <div class="proovr1-collect__tags" style="display: flex; align-items: center;">
+             <span @click="predict2()" class="proovr1-collect__tag" style="margin:20px 0 0px 470px">周边孔超挖量和爆破块度预测</span>
+           </div>
             <h3 class="font-type8" style="color: white"><strong>线性超挖预测值为：</strong>
               <br>
               <el-input style="width:1167px;margin-top: 10px;" v-model="I" readonly><template slot="suffix">cm</template></el-input>

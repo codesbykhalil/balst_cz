@@ -8,10 +8,9 @@
         <el-input style="width:100px;margin-bottom: 20px" v-model="I"><template slot="suffix">kg</template></el-input>
       </h3>
       <br/>
-<!--      <div class="proovr1-collect__tags" style="display: flex; align-items: center;">-->
-<!--        &lt;!&ndash;          <el-button style="margin:20px 0 20px 10px" @click="calculate()" type="primary">炮孔起爆时序计算</el-button>&ndash;&gt;-->
-<!--        <span class="proovr1-collect__tag" style="margin:20px 0 20px 568px;width:120px" @click="calculate()">炮孔起爆时序计算</span>-->
-<!--      </div>-->
+    <div  style="display: flex; align-items: center;">
+        <span @click="calculate" class="draw_button" style="margin:30px 0 20px 595px">炮孔起爆时序计算</span>
+        </div>
 
 
       <!-- 表格填入开始 -->
@@ -98,22 +97,77 @@ export default {
     },
     calculate(){
       this.projectId = cookie.get("projectId")
-      let datas = {"I": Number(this.I),"project_id": this.projectId};
+      let datas = {"projectId": this.projectId};
       // let datas = {"I": 20,"project_id": "1723888621566660610"}
       this.timer = new Date().getTime()
       outPutApi.firingSequence(datas).then(response => {
-        this.holeData = response.data;
+        const sequenceData = this.getFiringSequenceData(response);
+        this.holeData = sequenceData;
 
         this.getVertices = []
+        this.getSequence = []
         this.sequence = []
-        response.data.map((item) => {
+        sequenceData.map((item) => {
           // console.log("起爆网络起爆网络起爆网络起爆网络"+JSON.stringify(item))
-          this.getVertices.push(item.X1,item.Y1,0)
-          this.getSequence.push(item.Firing_sequence,item.Time,0)
+          this.getVertices.push(this.getItemValue(item, ['X1', 'x1', 'x']), this.getItemValue(item, ['Y1', 'y1', 'y']), 0)
+          this.getSequence.push(this.getItemValue(item, ['Firing_sequence', 'firingSeq', 'firingSequence', 'firing_sequence']), this.getItemValue(item, ['Time', 'time']), 0)
         })
         this.sequence = this.getSequence;
         this.vertices = this.getVertices;
       })
+    },
+    getFiringSequenceData(response) {
+      const data = response && response.data !== undefined ? response.data : response;
+      if (Array.isArray(data)) {
+        return this.normalizeFiringSequenceData(data);
+      }
+      if (data && Array.isArray(data.data)) {
+        return this.normalizeFiringSequenceData(data.data);
+      }
+      if (data && data.data && typeof data.data === 'object') {
+        return this.normalizeFiringSequenceData(Object.keys(data.data).reduce((list, key) => {
+          return Array.isArray(data.data[key]) ? list.concat(data.data[key]) : list;
+        }, []));
+      }
+      if (data && data.map && Array.isArray(data.map.data)) {
+        return this.normalizeFiringSequenceData(data.map.data);
+      }
+      return [];
+    },
+    normalizeFiringSequenceData(list) {
+      return list.map((item, index) => {
+        const firingSeq = this.getItemValue(item, ['Firing_sequence', 'firingSeq', 'firingSequence', 'firing_sequence']);
+        const time = this.getItemValue(item, ['Time', 'time']);
+        return {
+          ...item,
+          Serial_num: this.getItemValue(item, ['Serial_num', 'serialNum', 'serial_num', 'id']) || index + 1,
+          Hole_type: this.getHoleTypeName(this.getItemValue(item, ['Hole_type', 'holeType', 'type'])),
+          Explosive_amount: this.getItemValue(item, ['Explosive_amount', 'explosiveAmount', 'explosive_amount']),
+          Firing_sequence: firingSeq,
+          Time: time,
+        }
+      });
+    },
+    getHoleTypeName(type) {
+      const typeMap = {
+        sur: '周边孔',
+        surrounding: '周边孔',
+        cutting: '掏槽孔',
+        aux: '辅助孔',
+        auxiliary: '辅助孔',
+        floor: '底板孔',
+      };
+      return typeMap[type] || type || "";
+    },
+    getItemValue(item, fields) {
+      const source = item || {};
+      for (let i = 0; i < fields.length; i++) {
+        const value = source[fields[i]];
+        if (value !== undefined && value !== null) {
+          return value;
+        }
+      }
+      return 0;
     },
   }
 }
