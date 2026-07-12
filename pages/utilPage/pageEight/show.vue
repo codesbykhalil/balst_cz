@@ -241,17 +241,52 @@ export default {
         if (radius === 0) {
           this.shape.lineTo(x2, y2);
         } else {
-          // 如果有半径，则画弧线
-          const arcParams = this.calculateArcParams(x1, y1, x2, y2, radius);
-          const clockwise = x2 > x1; // 根据终点x坐标判断弧线方向
-          // 使用absarc方法绘制弧线
+          // 优先使用接口返回的圆心、起始角和角度差。
+          // 轮廓数据固定按顺时针输入，因此从起始角减去角度差得到结束角；
+          // angleDifference 小于 PI 时绘制短弧，大于 PI 时绘制长弧。
+          const hasApiArcParams = [
+            segment.arcCenterX,
+            segment.arcCenterY,
+            segment.startAngle,
+            segment.endAngle,
+            segment.angleDifference
+          ].every((value) => value !== null && value !== undefined && Number.isFinite(this.parseNum(value)));
+
+          let centerX;
+          let centerY;
+          let startAngle;
+          let endAngle;
+
+          if (hasApiArcParams) {
+            centerX = this.parseNum(segment.arcCenterX);
+            centerY = this.parseNum(segment.arcCenterY);
+            startAngle = this.parseNum(segment.startAngle);
+            endAngle = this.parseNum(segment.endAngle);
+
+            const expectedDifference = Math.abs(this.parseNum(segment.angleDifference));
+            const twoPi = Math.PI * 2;
+            const clockwiseDifference = ((startAngle - endAngle) % twoPi + twoPi) % twoPi;
+
+            // 接口起止角经过取整后若与角度差不一致，以 angleDifference 为准。
+            if (Math.abs(clockwiseDifference - expectedDifference) > 0.01) {
+              endAngle = startAngle - expectedDifference;
+            }
+          } else {
+            // 兼容缺少圆弧参数的旧数据
+            const arcParams = this.calculateArcParams(x1, y1, x2, y2, radius);
+            centerX = arcParams.centerX;
+            centerY = arcParams.centerY;
+            startAngle = arcParams.startAngle;
+            endAngle = arcParams.endAngle;
+          }
+
           this.shape.absarc(
-            arcParams.centerX,
-            arcParams.centerY,
+            centerX,
+            centerY,
             radius,
-            arcParams.startAngle,
-            arcParams.endAngle,
-            clockwise
+            startAngle,
+            endAngle,
+            true
           );
         }
       });
