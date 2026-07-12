@@ -15,7 +15,16 @@
               <img :src="require('assets/img/ui/Group 206.png')" alt="返回首页">
               <span>返回首页</span>
             </button>
-            <div class="header_title"><span style="color: #FFFFFF;font-size: 35px">全断面+楔形掏槽</span></div>
+            <div class="header_title">
+              <span style="color: #FFFFFF;font-size: 35px;font-weight: 700">全断面+楔形掏槽</span>
+              <div class="header_sub_info">
+                <span v-if="project1Info.tunnelFullName" class="header_time">隧道工作面：{{project1Info.tunnelFullName}}</span>
+              </div>
+              <div class="header_sub_info">
+                <span v-if="project1Info.standardMileage" class="header_time">里程号：{{project1Info.standardMileage}}</span>
+                <span v-if="project1Info.time" class="header_time">智能方案设计时间：{{project1Info.time}}</span>
+              </div>
+            </div>
             <div class="left_project">
               <div class="bg_project">
                 <span class="bg_text" @click="openData">打开云端文件</span>
@@ -209,6 +218,7 @@ import pageseventeen from './/pageseventeen.vue'
 import cloudFile from '../utilPage/cloudFile.vue'
 import connAnoSerApi from "@/api/connAnoSer";
 import logFile from "@/pages/utilPage/logFile/logFile.vue";
+import teamApi from "@/api/team";
 import {eventBus} from "../../plugins/nuxt-elementui";
 export default {
   layout:'default',
@@ -269,6 +279,7 @@ export default {
         phone: '',
         username: '',
       },
+      project1Info:{},
       dialogVisible: false,
       dialogVisible2: false,
       projects: [],
@@ -373,6 +384,16 @@ export default {
         console.log(this.loginInfo)
       }
     },
+    fetchProject1Info() {
+      const mileageId = cookie.get("mileageId");
+      if (mileageId) {
+        teamApi.getDataFromP1(mileageId).then(response => {
+          if (response.data.code == 1) {
+            this.project1Info = response.data.data;
+          }
+        });
+      }
+    },
     back(){
       this.$router.push({ path: '/' })
     },
@@ -413,6 +434,7 @@ export default {
     eventBus.$on('cloudFileHolesRendered', this.handleCloudFileHolesRendered);
     this.showInfo();
     this.fetchProjects();
+    this.fetchProject1Info();
     this.$nextTick(() => {
       this.getScrollHeight();
     })
@@ -690,10 +712,30 @@ body {
 }
 .header_title{
   display: flex;
+  flex-direction: column;
+  align-items: center;
   position: absolute;
-  left: 720px;
-  top: 10px;
-
+  left: 50%;
+  transform: translateX(-50%);
+  top: 12px;
+  white-space: nowrap;
+}
+.header_sub_info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 5px;
+}
+.header_time {
+  color: #b8d4f0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: rgba(255,255,255,0.06);
+  padding: 2px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(2px);
 }
 .left_project {
   display: flex;

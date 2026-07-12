@@ -51,6 +51,7 @@ import tables from '../utilPage/pageThirteen/table.vue'
 import show from '../utilPage/pageThirteen/show.vue'
 import firingSequence from '../utilPage/firingSequence.vue'
 import outPutApi from '@/api/outPut.js'
+import blastSequenceApi from '@/api/blastSequence.js'
 import {eventBus} from "../../plugins/nuxt-elementui";
 export default {
   components:{tables,show,firingSequence},
@@ -77,6 +78,7 @@ export default {
     }
   },
   mounted(){
+    this.loadBlastSequence();
     eventBus.$on('autoMode', (data)=>{
       if(data.autoStep == 6){
         setTimeout(() => {
@@ -116,10 +118,45 @@ export default {
         this.vertices = this.getVertices;
       })
     },
+    loadBlastSequence() {
+      this.projectId = cookie.get("projectId");
+      if (!this.projectId) {
+        return;
+      }
+      blastSequenceApi.getBlastSequenceInfo(this.projectId).then(response => {
+        this.applyFiringSequenceData(response);
+      }).catch(error => {
+        console.error('起爆网络回显失败', error);
+      });
+    },
+    applyFiringSequenceData(response) {
+      const sequenceData = this.getFiringSequenceData(response);
+      this.holeData = sequenceData;
+      this.getVertices = [];
+      this.getSequence = [];
+      sequenceData.forEach((item) => {
+        this.getVertices.push(
+          this.getItemValue(item, ['X1', 'x1', 'x']),
+          this.getItemValue(item, ['Y1', 'y1', 'y']),
+          0
+        );
+        this.getSequence.push(item.Firing_sequence, item.Time, 0);
+      });
+      this.sequence = this.getSequence;
+      this.vertices = this.getVertices;
+    },
     getFiringSequenceData(response) {
       const data = response && response.data !== undefined ? response.data : response;
       if (Array.isArray(data)) {
         return this.normalizeFiringSequenceData(data);
+      }
+      if (data && typeof data === 'object') {
+        const directList = Object.keys(data).reduce((list, key) => {
+          return Array.isArray(data[key]) ? list.concat(data[key]) : list;
+        }, []);
+        if (directList.length) {
+          return this.normalizeFiringSequenceData(directList);
+        }
       }
       if (data && Array.isArray(data.data)) {
         return this.normalizeFiringSequenceData(data.data);
@@ -140,7 +177,7 @@ export default {
         const time = this.getItemValue(item, ['Time', 'time']);
         return {
           ...item,
-          Serial_num: this.getItemValue(item, ['Serial_num', 'serialNum', 'serial_num', 'id']) || index + 1,
+          Serial_num: index + 1,
           Hole_type: this.getHoleTypeName(this.getItemValue(item, ['Hole_type', 'holeType', 'type'])),
           Explosive_amount: this.getItemValue(item, ['Explosive_amount', 'explosiveAmount', 'explosive_amount']),
           Firing_sequence: firingSeq,
