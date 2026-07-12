@@ -340,6 +340,12 @@ export default {
         this.scrollToBlastLayoutCanvas();
       }
     },
+    handleCloudFileHolesRendered() {
+      if(sessionStorage.getItem('pendingCloudScrollToCanvas') == '1'){
+        sessionStorage.removeItem('pendingCloudScrollToCanvas');
+        this.scrollToBlastLayoutCanvas();
+      }
+    },
     getScrollHeight() {
       this.scrollHeight = []
       this.activities.map(item => {
@@ -404,6 +410,7 @@ export default {
   },
   mounted(){
     eventBus.$on('autoMode', this.handleAutoMode);
+    eventBus.$on('cloudFileHolesRendered', this.handleCloudFileHolesRendered);
     this.showInfo();
     this.fetchProjects();
     this.$nextTick(() => {
@@ -414,6 +421,7 @@ export default {
   },
   beforeDestroy() {
     eventBus.$off('autoMode', this.handleAutoMode);
+    eventBus.$off('cloudFileHolesRendered', this.handleCloudFileHolesRendered);
   },
 };
 </script>

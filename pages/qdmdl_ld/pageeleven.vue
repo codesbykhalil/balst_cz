@@ -192,9 +192,11 @@ export default {
             this.vertices = verticesMir;
             this.tube = tubeMir;
             this.auxHoleData = auxHoleDataMir;
+            eventBus.$emit('cloudFileHolesRendered');
           })
         }else{
           this.timer = new Date().getTime();
+          eventBus.$emit('cloudFileHolesRendered');
         }
       });
   },

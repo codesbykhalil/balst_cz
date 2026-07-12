@@ -509,7 +509,7 @@ export default {
 
     },
     handleMode(){
-      cookie.set('isAutoMode', 1);
+      cookie.set('isAutoMode', 0);
       teamApi.getDataFromP1(this.mileageId).then(response => {
         this.project1Info = response.data.data;
         console.log("project1Info"+JSON.stringify(this.project1Info))
@@ -594,6 +594,7 @@ export default {
               : projectResponse.data;
             const holesData = holesResponse.data.map;
             cookie.set('projectId', projectId);
+            sessionStorage.setItem('pendingCloudScrollToCanvas', '1');
             sessionStorage.setItem('pendingCloudProject', JSON.stringify(projectData));
             sessionStorage.setItem('pendingCloudHoles', JSON.stringify(holesData));
             this.$router.push({name: targetRoute, query: {dataToSend: this.dataToSend}});
