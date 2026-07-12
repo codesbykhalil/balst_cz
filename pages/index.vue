@@ -616,12 +616,12 @@ export default {
     webSocketOpen() {//打开
       console.log("WebSocket连接成功")
     },
-    webSocketMessage(e) { //数据接收
-      console.log(e.data);
-      //webSocket实现轮询查询接口
-      this.mileageId = e.data
-      this.handleButtonClick()
-    },
+    // webSocketMessage(e) { //数据接收
+    //   console.log(e.data);
+    //   //webSocket实现轮询查询接口
+    //   this.mileageId = e.data
+    //   this.handleButtonClick()
+    // },
     webSocketClose() {  //关闭
       console.log("WebSocket关闭");
     },
