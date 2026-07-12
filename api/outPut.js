@@ -24,7 +24,6 @@ export default{
   StraightSequence(datas){
     return request({
       url: `/straight_sequence`,
-      baseURL:'http://212.64.29.33:5000',
       data: datas,
       method: 'post'
     })
