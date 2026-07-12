@@ -55,9 +55,6 @@ export default {
         setTimeout(() => {
           if(cookie.get('isAutoMode') == 1)
           this.autoCal();
-          setTimeout(() => {
-            eventBus.$emit('autoMode',{autoStep:10})
-          },500);
         },1000);
       }
     })
@@ -97,6 +94,10 @@ export default {
         teamApi.submitDataToP6(this.projectId).then(response => {
           console.log("发送结果到课题六状态："+response.data.data.data)
           if(response.data.data.code == 200){
+            if(cookie.get('isAutoMode') == 1){
+              eventBus.$emit('autoMode',{autoStep:10})
+              return;
+            }
             this.clearCookie();
             window.location.href = "/"
           }

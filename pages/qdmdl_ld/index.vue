@@ -209,6 +209,7 @@ import pageseventeen from './/pageseventeen.vue'
 import cloudFile from '../utilPage/cloudFile.vue'
 import connAnoSerApi from "@/api/connAnoSer";
 import logFile from "@/pages/utilPage/logFile/logFile.vue";
+import {eventBus} from "../../plugins/nuxt-elementui";
 export default {
   layout:'default',
   components:{
@@ -321,6 +322,24 @@ export default {
       let offsetTop = jump[index].offsetTop;
       this.$refs.box.scrollTop = offsetTop;  //跳到对应位置
     },
+    scrollToBlastLayoutCanvas() {
+      this.timeLineClick(10);
+      this.$nextTick(() => {
+        setTimeout(() => {
+          const box = this.$refs.box;
+          const target = document.getElementById('page_eleven_draw_area');
+          if(!box || !target) return;
+          const boxTop = box.getBoundingClientRect().top;
+          const targetTop = target.getBoundingClientRect().top;
+          box.scrollTop += targetTop - boxTop - 20;
+        },300);
+      });
+    },
+    handleAutoMode(data) {
+      if(data.autoStep == 10){
+        this.scrollToBlastLayoutCanvas();
+      }
+    },
     getScrollHeight() {
       this.scrollHeight = []
       this.activities.map(item => {
@@ -384,6 +403,7 @@ export default {
     },
   },
   mounted(){
+    eventBus.$on('autoMode', this.handleAutoMode);
     this.showInfo();
     this.fetchProjects();
     this.$nextTick(() => {
@@ -392,9 +412,9 @@ export default {
     // this.resetSize();
     // window.addEventListener('resize', this.resetSize);
   },
-  // beforeDestroy() {
-  //   window.removeEventListener('resize', this.resetSize);
-  // },
+  beforeDestroy() {
+    eventBus.$off('autoMode', this.handleAutoMode);
+  },
 };
 </script>
 

@@ -75,6 +75,7 @@ import rockTypeApi from "@/api/getspecies"
 import teamApi from "@/api/team"
 import pagesix from "@/pages/stjdl_ld/pagesix.vue";
 import loginApi from '@/api/login.js'
+import cloudFileApi from '@/api/cloudFile.js'
 import * as url from "url";
 export default {
   components:{
@@ -508,6 +509,7 @@ export default {
 
     },
     handleMode(){
+      cookie.set('isAutoMode', 1);
       teamApi.getDataFromP1(this.mileageId).then(response => {
         this.project1Info = response.data.data;
         console.log("project1Info"+JSON.stringify(this.project1Info))
@@ -573,73 +575,31 @@ export default {
             this.dataToSend.advance = 0;
           }
 
-          this.$confirm(`
-            <div>
-                  <span><strong>项目名称:</strong></span >
-                  <span style='font-weight:bold;color:#000'>${this.project1Info.tunnelFullName}</span>
-            </div><br/>
-            <div style='display: flex;justify-content: space-between;align-items: center;'>
+          const projectId = this.project1Info.projectId;
+          const targetRoute = excavationModel === '二台阶' || excavationModel === '台阶法'
+            ? 'stjdl_ld'
+            : 'qdmdl_ld';
 
-              <div>
-                <div> <span>开挖进尺:</span >
-                  <span style='font-weight:bold;color:#000'>${response.data.data.excavation_footage}</span>
-                  </div>
-                <div> <span>开挖模式:</span >
-                  <span style='font-weight:bold;color:#000'>${response.data.data.excavation_model} </span>
-                  </div>
-                <div> <span>开挖高度:</span >
-                  <span style='font-weight:bold;color:#000'>${response.data.data.steps_height}</span>
-                  </div>
-                <div> <span>开挖长度:</span>
-                  <span  style='font-weight:bold;color:#000'>${response.data.data.steps_length} </span>
-                  </div>
-              </div>
-              <div>
-                <div> <span>抗压强度:</span> <span style='font-weight:bold;color:#000'>${this.testData2.Rc}</span></div>
-                <div> <span>岩石完整程度:</span> <span style='font-weight:bold;color:#000'>${this.testData2.integrity}</span>
-                </div>
-                <div> <span>岩石风化程度:</span> <span style='font-weight:bold;color:#000'>${this.testData2.rockWeather}</span>
-                </div>
-                <div> <span>岩石种类:</span> <span style='font-weight:bold;color:#000'>${this.testData2.lithology}</span>
-                </div>
-                <div> <span>围岩等级:</span> <span style='font-weight:bold;color:#000'>${this.testData2.classify}</span>
-                </div>
-              </div>
-            </div>
-            <div style='font-size:16px;font-weight:bold;margin-top:2px'>点击确定进入，点击取消转至独立设计版本</div>
-            `,
-            '提示', {
-              dangerouslyUseHTMLString: true,
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'info'
-            }).then(() => {
+          if (!projectId) {
+            this.$message({message: '当前循环里程未关联爆破设计工程', type: 'warning'});
+            return;
+          }
 
-            if (excavationModel === '全断面') {
-              // alert(this.dataToSend.advance)
-              // 跳转到 "/method1" 页面
-              // cookie.set('isAutoMode', 1);
-              this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
-
-            } else if (excavationModel === ('二台阶'||'台阶法')) {
-              // 跳转到 "/method2" 页面
-              // alert(this.dataToSend.advance)
-              this.$router.push({name: 'stjdl_ld', query: {dataToSend: this.dataToSend}});
-              console.log(this.dataToSend);
-
-            } else {
-              // alert(this.dataToSend.advance)
-              this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
-              // this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
-              console.log(this.dataToSend);
-            }
+          Promise.all([
+            cloudFileApi.getProject(projectId),
+            cloudFileApi.getAllHole(projectId)
+          ]).then(([projectResponse, holesResponse]) => {
+            const projectData = projectResponse.data && projectResponse.data.data
+              ? projectResponse.data.data
+              : projectResponse.data;
+            const holesData = holesResponse.data.map;
+            cookie.set('projectId', projectId);
+            sessionStorage.setItem('pendingCloudProject', JSON.stringify(projectData));
+            sessionStorage.setItem('pendingCloudHoles', JSON.stringify(holesData));
+            this.$router.push({name: targetRoute, query: {dataToSend: this.dataToSend}});
           }).catch(() => {
-              // 用户取消了跳转，跳转到指定页面
-              window.location.href = 'http://124.220.35.175:1234/qdmdl_x';
-              // 处理取消按钮点击事件
-              console.log('取消按钮被点击');
-            }
-          );
+            this.$message({message: '爆破设计数据加载失败', type: 'error'});
+          });
         })
 
       })

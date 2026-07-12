@@ -32,7 +32,7 @@
         </div>
         <!-- 表格填入结束 -->
 
-        <div style="display: flex;justify-content: space-between; width: 1160px; ">
+        <div id="page_eleven_draw_area" style="display: flex;justify-content: space-between; width: 1160px; ">
           <div style="width: 545px">
             <el-table
                 :data="tablesData1"
@@ -133,6 +133,16 @@ export default {
     }
   },
   created(){
+    eventBus.$on('autoMode', (data)=>{
+      if(data.autoStep == 4){
+        setTimeout(() => {
+          this.calculate();
+          setTimeout(() => {
+            eventBus.$emit('autoMode',{autoStep:5})
+          },1000);
+        },1000);
+      }
+    })
     //云端文件导入回显
       eventBus.$on('cloudFileHoles',(data)=>{
         if(data.auxiliaryHole!=null && data.auxiliaryHole.length!=0){
