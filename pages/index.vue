@@ -74,7 +74,7 @@ import cookie from "js-cookie";
 import rockTypeApi from "@/api/getspecies"
 import teamApi from "@/api/team"
 import pagesix from "@/pages/stjdl_ld/pagesix.vue";
-import loginApi from '@/api/login.js'
+// import loginApi from '@/api/login.js' // 已取消组件初始化时的自动登录，后续回显使用固定 userid
 import cloudFileApi from '@/api/cloudFile.js'
 import * as url from "url";
 export default {
@@ -119,15 +119,16 @@ export default {
   },
 
   created() {
-    let user={
-      phone:'12345678',
-      password:'12345678'
-    }
-
-    if(!cookie.get('user_token'))
-      loginApi.doLogin(user).then(response => {
-        cookie.set('user_token',response.data.map.user_token)
-      })
+    // 取消组件初始化时的自动登录，后续回显请求使用固定 userid
+    // let user={
+    //   phone:'12345678',
+    //   password:'12345678'
+    // }
+    //
+    // if(!cookie.get('user_token'))
+    //   loginApi.doLogin(user).then(response => {
+    //     cookie.set('user_token',response.data.map.user_token)
+    //   })
 
     if (process.browser) {
       if ('WebSocket' in window) {
@@ -146,12 +147,12 @@ export default {
     this.timer = null;
   },
   mounted() {
-    //自动登录
-    cookie.remove("user_token")
-    loginApi.doLogin({phone:"12345678",password:"12345678"}).then(response => {
-      console.log('user_token',response.data.map.user_token)
-      cookie.set('user_token',response.data.map.user_token)
-    })
+    // 取消组件初始化时的自动登录，后续回显请求使用固定 userid
+    // cookie.remove("user_token")
+    // loginApi.doLogin({phone:"12345678",password:"12345678"}).then(response => {
+    //   console.log('user_token',response.data.map.user_token)
+    //   cookie.set('user_token',response.data.map.user_token)
+    // })
     //深圳大学接口，待定
     // let str = "康定2号隧1道"
     // teamApi.listOverbreakData(str).then(response=>{
@@ -318,7 +319,8 @@ export default {
             children: item.mileageList.map(mileage => ({
               treeKey : `mileage-${mileage.mileage_id}`,
               id : mileage.mileage_id,
-              label : `${mileage.standardMileage}    ${mileage.mileage}`,
+              // 只显示标准桩号，不显示 mileage 字段；mileage_id 仍用于节点选择和接口请求
+              label : mileage.standardMileage,
             }))
           }))
           this.restoreHomeSelection();
