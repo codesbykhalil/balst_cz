@@ -5,50 +5,44 @@
         <div style="background-color: white;height: 8%">
           <!--          <img src="@/assets/img/JHUNLogo.png" style="width:4%;height:100%;positioin:relative;margin: 0% 0% 3% 1%;cursor: pointer;">-->
           <!--          <img src="@/assets/img/aiblastLogo.png" style="width:4%;height:100%;positioin:relative;margin: 0% 0% 3% 1%;cursor: pointer;">-->
-          <img src="@/assets/img/indexPic/图片16.png" style="width:35%;height:100%;positioin:relative;margin: 0% 0% 3% 0.5%;cursor: pointer;">
-          <img src="@/assets/img/indexPic/图片20.png" style="width:3%;height:78%;positioin:relative;margin: 0% 0% 3.5% 48.5%;cursor: pointer;">
-          <img src="@/assets/img/indexPic/图片19.png" style="width:3%;height:80%;positioin:relative;margin:0% 0% 3.4% 3%;cursor: pointer;">
-          <img src="@/assets/img/indexPic/图片18.png" style="width:3%;height:78%;positioin:relative;margin:0% 0% 3.5% 3%;cursor: pointer;">
+          <img src="@/assets/img/indexPic/图片16.png"
+            style="width:35%;height:100%;positioin:relative;margin: 0% 0% 3% 0.5%;cursor: pointer;">
+          <img src="@/assets/img/indexPic/图片20.png"
+            style="width:3%;height:78%;positioin:relative;margin: 0% 0% 3.5% 48.5%;cursor: pointer;">
+          <img src="@/assets/img/indexPic/图片19.png"
+            style="width:3%;height:80%;positioin:relative;margin:0% 0% 3.4% 3%;cursor: pointer;">
+          <img src="@/assets/img/indexPic/图片18.png"
+            style="width:3%;height:78%;positioin:relative;margin:0% 0% 3.5% 3%;cursor: pointer;">
         </div>
 
         <div style="display: flex;margin-top: 3%; ">
           <div style=" width: 25%; transform: translate(22%, 0);">
             <div>
-              <!--              <button class="button" @click="handleButtonClick"><p style="font-size: 30px">爆破方案一键生成</p></button>-->
+
+
               <p style="color: white;font-size: 26px;transition: transform .2s;">爆破方案一键生成模块，
                 可以通过网络自动接收围岩的地质信息、爆破开挖模式和进尺等信息，自动化智能生成隧道断面上的炮孔坐标、装药结构、炸药用量和起爆顺序等，并进行爆破效果的预测。</p>
-              <button class="button" @click="handleButtonClick2" style="margin-top: 5%">
-                <p style="font-size: 22px">导入断面设计信息 爆破方案一键生成</p></button>
+                <button class="button" @click="handleButtonTo"
+                style="margin-top: 2px;">
+                <p style="font-size: 22px">进入手动爆破设计模式</p>
+              </button>
+              <button class="button" @click="handleButtonClick2" style="margin-top: 5px;">
+                <p style="font-size: 22px">历史爆破设计智能查询</p>
+              </button>
 
               <div style="position: absolute" class="tree_container">
-                <el-tree
-                  :data="data"
-                  ref="menuTree"
-                  node-key="treeKey"
-                  :props="defaultProps"
-                  :default-expanded-keys="expandedKeys"
-                  :current-node-key="currentNodeKey"
-                  @node-click="handleNodeClick"
-                  accordion
-                  :highlight-current="true"
-                  :style="{ maxHeight: '300px', overflowY: 'auto',}"
-
-                >
+                <el-tree :data="data" ref="menuTree" node-key="treeKey" :props="defaultProps"
+                  :default-expanded-keys="expandedKeys" :current-node-key="currentNodeKey" @node-click="handleNodeClick"
+                  accordion :highlight-current="true" :style="{ maxHeight: '300px', overflowY: 'auto', }">
                 </el-tree>
 
               </div>
             </div>
           </div>
-          <div style="width: 55%; height: 65%;transform: translate(65%, 0);position: absolute;margin-top: 1.2%;">
-            <video
-              src="@/assets/video/demo3.mp4"
-              controls
-              width="100%"
-              height="100%"
-            ></video>
-          </div>
+          <!-- <div style="width: 55%; height: 65%;transform: translate(65%, 0);position: absolute;margin-top: 1.2%;">
+            <video src="@/assets/video/demo3.mp4" controls width="100%" height="100%"></video>
+          </div> -->
         </div>
-
 
 
 
@@ -69,7 +63,7 @@
 
 import connAnoSerApi from "@/api/connAnoSer";
 import pageseven from "./stjdl_ld/pageseven.vue"
-import {eventBus} from "../plugins/nuxt-elementui";
+import { eventBus } from "../plugins/nuxt-elementui";
 import cookie from "js-cookie";
 import rockTypeApi from "@/api/getspecies"
 import teamApi from "@/api/team"
@@ -78,35 +72,35 @@ import pagesix from "@/pages/stjdl_ld/pagesix.vue";
 import cloudFileApi from '@/api/cloudFile.js'
 import * as url from "url";
 export default {
-  components:{
+  components: {
     pageseven,
   },
-  data (){
-    return{
+  data() {
+    return {
       videoVisible: false,
-      urls:[
-        {url:require('../assets/video/1.png')},
-        {url:require('../assets/video/2.png')},
-        {url:require('../assets/video/3.png')},
-        {url:require('../assets/video/4.png')},
-        {url:require('../assets/video/5.png')},
-        {url:require('../assets/video/6.png')},
+      urls: [
+        { url: require('../assets/video/1.png') },
+        { url: require('../assets/video/2.png') },
+        { url: require('../assets/video/3.png') },
+        { url: require('../assets/video/4.png') },
+        { url: require('../assets/video/5.png') },
+        { url: require('../assets/video/6.png') },
       ],
       webSocket: null,
-      mileageId:'',
-      p1top4:{},
-      dataToSend : {
+      mileageId: '',
+      p1top4: {},
+      dataToSend: {
         rockId: '',
         ucs: '',
         structureScore: '',
         structuralPlaneScore: '',
-        indexNum:'',
-        advance:'',
-        testData2:{},
+        indexNum: '',
+        advance: '',
+        testData2: {},
       },
-      project1Info:{},
-      user:{phone:"12345678",password:"12345678"},
-      workFaceList:[],
+      project1Info: {},
+      user: { phone: "12345678", password: "12345678" },
+      workFaceList: [],
       isButtonDisabled: false,
       data: [],
       expandedKeys: [],
@@ -142,7 +136,7 @@ export default {
       }
     }
   },
-  beforeDestroy(){
+  beforeDestroy() {
     clearInterval(this.timer);
     this.timer = null;
   },
@@ -174,6 +168,10 @@ export default {
   },
 
   methods: {
+    //进入手动设计模式
+    handleButtonTo() {
+          window.location.href = "http://129.211.220.225:1010/";
+    },
     //点击按钮时,触发弹出效果
     playVideo() {
       //触发点击时,让其显示
@@ -185,7 +183,7 @@ export default {
       this.$refs.video.pause()
     },
     handleNodeClick(data, node) {
-      if (data.children == null){
+      if (data.children == null) {
         this.mileageId = String(data.id);
         this.rememberHomeSelection(data, node);
         console.log(this.mileageId)
@@ -227,10 +225,10 @@ export default {
       }
     },
     handleButtonClick() {
-// 调用接口获取开挖方法信息
+      // 调用接口获取开挖方法信息
 
       teamApi.getDataFromP1(this.mileageId).then(response => {
-        console.log("project1Info",JSON.stringify(response.data.data))
+        console.log("project1Info", JSON.stringify(response.data.data))
         this.project1Info = response.data.data;
 
         // cookie.set("classifyInfo", this.project1Info);
@@ -238,31 +236,31 @@ export default {
         const classifyInfo = this.project1Info;
         this.testData2 = this.project1Info;
 
-        let str2= classifyInfo.Rc.match(/\d+(\.\d+)?/g);
-        this.dataToSend.ucs = (Number(str2[0])+Number(str2[1]))/2
+        let str2 = classifyInfo.Rc.match(/\d+(\.\d+)?/g);
+        this.dataToSend.ucs = (Number(str2[0]) + Number(str2[1])) / 2
 
         this.dataToSend.indexNum = parseFloat((this.dataToSend.ucs / 10).toFixed(2));
-        if (classifyInfo.integrity=="完整") {
+        if (classifyInfo.integrity == "完整") {
           this.dataToSend.structureScore = 16
-        } if (classifyInfo.integrity=="较完整"){
+        } if (classifyInfo.integrity == "较完整") {
           this.dataToSend.structureScore = 14
-        } if (classifyInfo.integrity=="较破碎"){
+        } if (classifyInfo.integrity == "较破碎") {
           this.dataToSend.structureScore = 11
-        } if(classifyInfo.integrity == "破碎"){
+        } if (classifyInfo.integrity == "破碎") {
           this.dataToSend.structureScore = 8
-        }if(classifyInfo.integrity == "极破碎") {
+        } if (classifyInfo.integrity == "极破碎") {
           this.dataToSend.structureScore = 5
         }
 
-        if (classifyInfo.rockWeather == "未风化"){
+        if (classifyInfo.rockWeather == "未风化") {
           this.dataToSend.structuralPlaneScore = 15
-        } if (classifyInfo.rockWeather == "微风化"){
+        } if (classifyInfo.rockWeather == "微风化") {
           this.dataToSend.structuralPlaneScore = 12
-        } if (classifyInfo.rockWeather == "弱风化"){
+        } if (classifyInfo.rockWeather == "弱风化") {
           this.dataToSend.structuralPlaneScore = 9
-        } if (classifyInfo.rockWeather == "强风化"){
+        } if (classifyInfo.rockWeather == "强风化") {
           this.dataToSend.structuralPlaneScore = 6
-        } if (classifyInfo.rockWeather == "全风化"){
+        } if (classifyInfo.rockWeather == "全风化") {
           this.dataToSend.structuralPlaneScore = 3
         }
         //新增
@@ -270,12 +268,12 @@ export default {
 
         this.p1top4.lithology = classifyInfo.lithology;
         console.log(this.p1top4.lithology);
-        rockTypeApi.getRockId(this.p1top4).then(response=>{
-          console.log("岩石ID  "+response.data.data.rockId);
+        rockTypeApi.getRockId(this.p1top4).then(response => {
+          console.log("岩石ID  " + response.data.data.rockId);
           this.dataToSend.rockId = response.data.data.rockId;
           console.log(this.dataToSend);
-          console.log("dataToSendEvent"+JSON.stringify(this.dataToSend))
-          eventBus.$emit('dataToSendEvent', {dataToSend :this.dataToSend});
+          console.log("dataToSendEvent" + JSON.stringify(this.dataToSend))
+          eventBus.$emit('dataToSendEvent', { dataToSend: this.dataToSend });
           this.autoMode();
         })
 
@@ -284,9 +282,9 @@ export default {
       console.log("Updated dataToSend:", this.dataToSend);
     },
     handleButtonClick2() {
-        // cookie.set('isAutoMode', 0);
-        //  cookie.set('rockLEvel', 0);
-        // this.$router.push({ name: 'qdmdl_ld' });
+      // cookie.set('isAutoMode', 0);
+      //  cookie.set('rockLEvel', 0);
+      // this.$router.push({ name: 'qdmdl_ld' });
       if (this.isButtonDisabled) {
         return; // 如果是，则直接返回，什么都不做
       }
@@ -296,8 +294,8 @@ export default {
       cookie.set('isAutoMode', 0);
       // 调用接口获取开挖方法信息
       let userData = new FormData();
-      userData.append("username","czjhun")
-      userData.append("password","czjhun.123")
+      userData.append("username", "czjhun")
+      userData.append("password", "czjhun.123")
       connAnoSerApi.info_Verify(userData).then(response => {
         console.log("testData" + JSON.stringify(response.data.token))
         cookie.set("testToken", response.data.token);
@@ -308,19 +306,20 @@ export default {
           let list = response.data.work_face_list;
           list.map((item) => {
             this.workFaceList.push({
-              tunnelFullName:`${item.tunnelName}${item.workAreaName}${item.workFaceName}`,
-              mileageList:item.mileageList})
+              tunnelFullName: `${item.tunnelName}${item.workAreaName}${item.workFaceName}`,
+              mileageList: item.mileageList
+            })
           })
-          console.log("project1DataList====="+JSON.stringify(this.workFaceList))
+          console.log("project1DataList=====" + JSON.stringify(this.workFaceList))
 
           this.data = this.workFaceList.map(item => ({
-            treeKey : item.tunnelFullName,
-            label : item.tunnelFullName,
+            treeKey: item.tunnelFullName,
+            label: item.tunnelFullName,
             children: item.mileageList.map(mileage => ({
-              treeKey : `mileage-${mileage.mileage_id}`,
-              id : mileage.mileage_id,
+              treeKey: `mileage-${mileage.mileage_id}`,
+              id: mileage.mileage_id,
               // 只显示标准桩号，不显示 mileage 字段；mileage_id 仍用于节点选择和接口请求
-              label : mileage.standardMileage,
+              label: mileage.standardMileage,
             }))
           }))
           this.restoreHomeSelection();
@@ -337,8 +336,8 @@ export default {
       cookie.set('isAutoMode', 0);
       // 调用接口获取开挖方法信息
       let userData = new FormData();
-      userData.append("username","czjhun")
-      userData.append("password","czjhun.123")
+      userData.append("username", "czjhun")
+      userData.append("password", "czjhun.123")
       connAnoSerApi.info_Verify(userData).then(response => {
         console.log("testData" + JSON.stringify(response.data.token))
         cookie.set("testToken", response.data.token);
@@ -352,33 +351,33 @@ export default {
           console.log("testData2" + JSON.stringify(response.data));
           cookie.set("classifyInfo", response.data.classifyInfo);
           const classifyInfo = response.data.classifyInfo;
-          this.testData2 = {...response.data.classifyInfo}
+          this.testData2 = { ...response.data.classifyInfo }
           //新增
-          let str2= classifyInfo.Rc.match(/\d+(\.\d+)?/g);
-          this.dataToSend.ucs = (Number(str2[0])+Number(str2[1]))/2;
+          let str2 = classifyInfo.Rc.match(/\d+(\.\d+)?/g);
+          this.dataToSend.ucs = (Number(str2[0]) + Number(str2[1])) / 2;
 
           this.dataToSend.indexNum = parseFloat((this.dataToSend.ucs / 10).toFixed(2));
-          if (classifyInfo.integrity=="完整") {
+          if (classifyInfo.integrity == "完整") {
             this.dataToSend.structureScore = 16
-          } if (classifyInfo.integrity=="较完整"){
+          } if (classifyInfo.integrity == "较完整") {
             this.dataToSend.structureScore = 14
-          } if (classifyInfo.integrity=="较破碎"){
+          } if (classifyInfo.integrity == "较破碎") {
             this.dataToSend.structureScore = 11
-          } if(classifyInfo.integrity == "破碎"){
+          } if (classifyInfo.integrity == "破碎") {
             this.dataToSend.structureScore = 8
-          }if(classifyInfo.integrity == "极破碎") {
+          } if (classifyInfo.integrity == "极破碎") {
             this.dataToSend.structureScore = 5
           }
 
-          if (classifyInfo.rockWeather == "未风化"){
+          if (classifyInfo.rockWeather == "未风化") {
             this.dataToSend.structuralPlaneScore = 15
-          } if (classifyInfo.rockWeather == "微风化"){
+          } if (classifyInfo.rockWeather == "微风化") {
             this.dataToSend.structuralPlaneScore = 12
-          } if (classifyInfo.rockWeather == "弱风化"){
+          } if (classifyInfo.rockWeather == "弱风化") {
             this.dataToSend.structuralPlaneScore = 9
-          } if (classifyInfo.rockWeather == "强风化"){
+          } if (classifyInfo.rockWeather == "强风化") {
             this.dataToSend.structuralPlaneScore = 6
-          } if (classifyInfo.rockWeather == "全风化"){
+          } if (classifyInfo.rockWeather == "全风化") {
             this.dataToSend.structuralPlaneScore = 3
           }
           //新增
@@ -386,24 +385,24 @@ export default {
 
           this.p1top4.lithology = classifyInfo.lithology;
           console.log(this.p1top4.lithology);
-          rockTypeApi.getRockId(this.p1top4).then(response=>{
-            console.log("花岗岩ID  "+response.data.data.rockId);
+          rockTypeApi.getRockId(this.p1top4).then(response => {
+            console.log("花岗岩ID  " + response.data.data.rockId);
             this.dataToSend.rockId = response.data.data.rockId;
             console.log(this.dataToSend);
           })
-          console.log("dataToSendEvent"+JSON.stringify(this.dataToSend))
-          eventBus.$emit('dataToSendEvent', {dataToSend :this.dataToSend});
+          console.log("dataToSendEvent" + JSON.stringify(this.dataToSend))
+          eventBus.$emit('dataToSendEvent', { dataToSend: this.dataToSend });
         });
         this.handleMode();
       });
 
     },
-    autoMode(){
+    autoMode() {
       // 8728
       teamApi.getDataFromP2(this.project1Info.mileageID).then(response => {
         console.log("excavation_data" + JSON.stringify(response.data.data));
         const excavationModel = response.data.data.excavation_model;//获取开挖方法
-        console.log(response.data,"---")
+        console.log(response.data, "---")
         // 使用正则表达式提取数字部分
         if (response.data.data.excavation_footage !== undefined) {
           // const footageString = response.data.data.excavation_footage;
@@ -417,24 +416,24 @@ export default {
           //   // 如果没有匹配到数字，可以根据需要进行处理，例如给一个默认值
           //   this.dataToSend.advance = 0;
           // }
-        }else {
+        } else {
           // 处理 excavation_footage 未定义的情况
           this.dataToSend.advance = 0;
         }
         if (excavationModel === '全断面开挖') {
           // alert(this.dataToSend.advance)
           // 跳转到 "/method1" 页面
-          this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
+          this.$router.push({ name: 'qdmdl_ld', query: { dataToSend: this.dataToSend } });
 
         } else if (excavationModel === '二台阶法开挖') {
           // 跳转到 "/method2" 页面
           // alert(this.dataToSend.advance)
-          this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
+          this.$router.push({ name: 'qdmdl_ld', query: { dataToSend: this.dataToSend } });
           console.log(this.dataToSend);
 
         } else {
           // alert(this.dataToSend.advance)
-          this.$router.push({name: 'qdmdl_ld', query: {dataToSend: this.dataToSend}});
+          this.$router.push({ name: 'qdmdl_ld', query: { dataToSend: this.dataToSend } });
           console.log(this.dataToSend);
         }
 
@@ -502,7 +501,7 @@ export default {
         //   console.log('取消按钮被点击');
         // }
         // );
-      }).catch(error =>{
+      }).catch(error => {
         this.$message({
           message: error.data.msg,
           type: 'warning'
@@ -510,11 +509,11 @@ export default {
       })
 
     },
-    handleMode(){
+    handleMode() {
       cookie.set('isAutoMode', 0);
       teamApi.getDataFromP1(this.mileageId).then(response => {
         this.project1Info = response.data.data;
-        console.log("project1Info"+JSON.stringify(this.project1Info))
+        console.log("project1Info" + JSON.stringify(this.project1Info))
         if (this.project1Info === null || this.project1Info === undefined || this.project1Info === '') {
           alert('未接收到数据');
           return;
@@ -524,31 +523,31 @@ export default {
         const classifyInfo = this.project1Info;
         this.testData2 = this.project1Info;
 
-        let str2= classifyInfo.Rc.match(/\d+(\.\d+)?/g);
-        this.dataToSend.ucs = (Number(str2[0])+Number(str2[1]))/2
+        let str2 = classifyInfo.Rc.match(/\d+(\.\d+)?/g);
+        this.dataToSend.ucs = (Number(str2[0]) + Number(str2[1])) / 2
 
         this.dataToSend.indexNum = parseFloat((this.dataToSend.ucs / 10).toFixed(2));
-        if (classifyInfo.integrity=="完整") {
+        if (classifyInfo.integrity == "完整") {
           this.dataToSend.structureScore = 16
-        } if (classifyInfo.integrity=="较完整"){
+        } if (classifyInfo.integrity == "较完整") {
           this.dataToSend.structureScore = 14
-        } if (classifyInfo.integrity=="较破碎"){
+        } if (classifyInfo.integrity == "较破碎") {
           this.dataToSend.structureScore = 11
-        } if(classifyInfo.integrity == "破碎"){
+        } if (classifyInfo.integrity == "破碎") {
           this.dataToSend.structureScore = 8
-        }if(classifyInfo.integrity == "极破碎") {
+        } if (classifyInfo.integrity == "极破碎") {
           this.dataToSend.structureScore = 5
         }
 
-        if (classifyInfo.rockWeather == "未风化"){
+        if (classifyInfo.rockWeather == "未风化") {
           this.dataToSend.structuralPlaneScore = 15
-        } if (classifyInfo.rockWeather == "微风化"){
+        } if (classifyInfo.rockWeather == "微风化") {
           this.dataToSend.structuralPlaneScore = 12
-        } if (classifyInfo.rockWeather == "弱风化"){
+        } if (classifyInfo.rockWeather == "弱风化") {
           this.dataToSend.structuralPlaneScore = 9
-        } if (classifyInfo.rockWeather == "强风化"){
+        } if (classifyInfo.rockWeather == "强风化") {
           this.dataToSend.structuralPlaneScore = 6
-        } if (classifyInfo.rockWeather == "全风化"){
+        } if (classifyInfo.rockWeather == "全风化") {
           this.dataToSend.structuralPlaneScore = 3
         }
         //新增
@@ -556,23 +555,23 @@ export default {
 
         this.p1top4.lithology = classifyInfo.lithology;
         console.log(this.p1top4.lithology);
-        rockTypeApi.getRockId(this.p1top4).then(response=>{
-          console.log("岩石ID  "+response.data.data.rockId);
+        rockTypeApi.getRockId(this.p1top4).then(response => {
+          console.log("岩石ID  " + response.data.data.rockId);
           this.dataToSend.rockId = response.data.data.rockId;
           console.log(this.dataToSend);
         })
-        console.log("dataToSendEvent"+JSON.stringify(this.dataToSend))
-        eventBus.$emit('dataToSendEvent', {dataToSend :this.dataToSend});
+        console.log("dataToSendEvent" + JSON.stringify(this.dataToSend))
+        eventBus.$emit('dataToSendEvent', { dataToSend: this.dataToSend });
 
         teamApi.getDataFromP2(this.mileageId).then(response => {
           // console.log("excavation_data" + JSON.stringify(response.data.result));
           const excavationModel = response.data.data.excavation_model;//获取开挖方法
-          console.log(response.data,"---")
+          console.log(response.data, "---")
           // 使用正则表达式提取数字部分
           if (response.data.data.excavation_footage !== undefined) {
-//临时接口无中文
+            //临时接口无中文
             this.dataToSend.advance = response.data.data.excavation_footage;
-          }else {
+          } else {
             // 处理 excavation_footage 未定义的情况
             this.dataToSend.advance = 0;
           }
@@ -583,25 +582,21 @@ export default {
             : 'qdmdl_ld';
 
           if (!projectId) {
-            this.$message({message: '当前循环里程未关联爆破设计工程', type: 'warning'});
+            this.$message({ message: '当前循环里程未关联爆破设计工程', type: 'warning' });
             return;
           }
 
-          Promise.all([
-            cloudFileApi.getProject(projectId),
-            cloudFileApi.getAllHole(projectId)
-          ]).then(([projectResponse, holesResponse]) => {
+          cloudFileApi.getProject(projectId).then(projectResponse => {
             const projectData = projectResponse.data && projectResponse.data.data
               ? projectResponse.data.data
               : projectResponse.data;
-            const holesData = holesResponse.data.map;
             cookie.set('projectId', projectId);
             sessionStorage.setItem('pendingCloudScrollToCanvas', '1');
             sessionStorage.setItem('pendingCloudProject', JSON.stringify(projectData));
-            sessionStorage.setItem('pendingCloudHoles', JSON.stringify(holesData));
-            this.$router.push({name: targetRoute, query: {dataToSend: this.dataToSend}});
+            sessionStorage.removeItem('pendingCloudHoles');
+            this.$router.push({ name: targetRoute, query: { dataToSend: this.dataToSend } });
           }).catch(() => {
-            this.$message({message: '爆破设计数据加载失败', type: 'error'});
+            this.$message({ message: '爆破设计数据加载失败', type: 'error' });
           });
         })
 
@@ -635,13 +630,15 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .el-tree-node__content:hover{
+::v-deep .el-tree-node__content:hover {
   background-image: linear-gradient(to right, #4879cb, #48c9c7);
 }
-::v-deep .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+
+::v-deep .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
   background-image: linear-gradient(to right, #4879cb, #48c9c7);
 }
-.tree_container{
+
+.tree_container {
   /*height: 100px;*/
   width: 100%;
   border-radius: 10px;
@@ -649,15 +646,18 @@ export default {
   margin: 3% 0 3% 0%;
   position: absolute;
 }
-.el-tree{
+
+.el-tree {
   background: transparent;
   color: #fff;
 }
+
 /*改变高度*/
-.el-tree-node__content{
+.el-tree-node__content {
   height: 50px;
   font-size: 30px !important;
 }
+
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -668,7 +668,7 @@ export default {
 }
 
 
-body{
+body {
   margin: 0;
 }
 
@@ -679,15 +679,20 @@ body{
   /* 设置背景图片铺满整个页面，不显示留白 */
   background-size: cover;
   background-repeat: no-repeat;
-  height: 100vh; /* 设置高度为视窗的100% */
+  height: 100vh;
+  /* 设置高度为视窗的100% */
   position: fixed;
-  top: 0; /* 距离窗口顶部的距离为0 */
-  right: 0; /* 距离窗口右侧的距离为0 */
+  top: 0;
+  /* 距离窗口顶部的距离为0 */
+  right: 0;
+  /* 距离窗口右侧的距离为0 */
   left: 0;
   /* 调整背景图片的位置以减少或消除留白 */
-  background-position: center center; /* 使背景图居中显示 */
+  background-position: center center;
+  /* 使背景图居中显示 */
 
 }
+
 .button {
   height: 1.2rem;
   width: 100%;
@@ -706,41 +711,49 @@ body{
 
 /* 可选的悬停样式 */
 .button:hover {
-  background-color: #005FCC; /* 悬停时背景颜色变化 */
-  transform: scale(1.05); /* 悬停时放大效果 */
+  background-color: #005FCC;
+  /* 悬停时背景颜色变化 */
+  transform: scale(1.05);
+  /* 悬停时放大效果 */
 }
 
 
-.button p{
+.button p {
   color: white;
   font-size: 0.65rem;
-  margin:0 0 1% 0;
+  margin: 0 0 1% 0;
 }
+
 .button:hover {
   color: rgb(8, 12, 241);
   background-color: rgba(0, 0, 0, 0.05);
   transform: scale(1.1)
 }
-.dir-img{
-  width:18%;
-  height:85%;
-  margin:2% 0 2% 5%;
+
+.dir-img {
+  width: 18%;
+  height: 85%;
+  margin: 2% 0 2% 5%;
   cursor: pointer;
   transition: transform .2s;
 }
-.dir-img:hover{
+
+.dir-img:hover {
   transform: scale(1.1)
 }
-.dir-img2{
-  width:12%;
-  height:12%;
-  margin:2% 0 1% 3.8%;
+
+.dir-img2 {
+  width: 12%;
+  height: 12%;
+  margin: 2% 0 1% 3.8%;
   cursor: pointer;
   transition: transform .2s;
 }
-.dir-img2:hover{
+
+.dir-img2:hover {
   transform: scale(1.1)
 }
+
 .el-carousel__item h3 {
   color: #475669;
   font-size: 14px;

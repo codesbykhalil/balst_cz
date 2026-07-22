@@ -20,7 +20,7 @@ export default{
         })
     },
   getOutlines(projectId){
-    //保存和更新断面轮廓线
+    //根据项目 ID 查询断面轮廓线
     return request({
       url: `${api_name}/get_outlines/${projectId}`,
       method: 'get'

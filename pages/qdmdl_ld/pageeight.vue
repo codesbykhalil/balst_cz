@@ -92,7 +92,7 @@
           <!--          <el-button style="margin:20px 0 40px 100px" @click="buildLine()" type="primary">确认并绘制开挖轮廓线</el-button>-->
           <!--          <el-button style="margin:-60px 0 0 100px" @click="clearLine()" type="danger">一键清除坐标</el-button>-->
           <div class="proovr1-collect__tags" style="display: flex; align-items: center;">
-            <button @click="buildLine" class="btn btn-1 btn-1b" style="margin-left: 370px" id="buildLine">确认并绘制开挖轮廓线</button>
+            <button @click="buildLine" class="btn btn-1 btn-1b" style="margin-left: 370px" id="buildLine">查询并绘制开挖轮廓线</button>
             <button @click="clearLine" class="btn btn-1 btn-1b" style="margin-left: 60px" id="clearLine">一键清除坐标</button>
           </div>
         </div>
@@ -129,7 +129,6 @@ import '~/assets/css2/pages.css'
 import show from '../utilPage/pageEight/show.vue'
 import cookie from 'js-cookie'
 import outlineApi from '@/api/outline.js'
-import getCuttingNum from "@/api/cutting"
 import {eventBus} from "@/plugins/nuxt-elementui";
 import teamApi from "@/api/team"
 export default {
@@ -184,12 +183,12 @@ export default {
         // {StringNum: 6,x1: '8.43',y1: '-0.5',x2: '-4.03',y2: '-0.5',r: '0',serialLine: '',isBottom: 1},
 
 
-        {StringNum: 1,x1: '8.5',y1: '-0.65',x2: '-4.1',y2: '-0.65',r: '0',serialLine: '',isBottom: 1},
-        {StringNum: 2,x1: '-4.1',y1: '-0.65',x2: '-4.465',y2: '1.477',r: '0',serialLine: '',isBottom: 0},
-        {StringNum: 3,x1: '-4.465',y1: '1.477',x2: '-3.688',y2: '5.213',r: '6.6',serialLine: '',isBottom: 0},
-        {StringNum: 4,x1: '-3.688',y1: '5.213',x2: '8.087',y2: '5.215',r: '6.7',serialLine: '',isBottom: 0},
-        {StringNum: 5,x1: '8.087',y1: '5.215',x2: '8.784',y2: '0.928',r: '6.6',serialLine: '',isBottom: 0},
-        {StringNum: 6,x1: '8.784',y1: '0.928',x2: '8.5',y2: '-0.65',r: '0',serialLine: '',isBottom: 0}
+        // {StringNum: 1,x1: '8.5',y1: '-0.65',x2: '-4.1',y2: '-0.65',r: '0',serialLine: '',isBottom: 1},
+        // {StringNum: 2,x1: '-4.1',y1: '-0.65',x2: '-4.465',y2: '1.477',r: '0',serialLine: '',isBottom: 0},
+        // {StringNum: 3,x1: '-4.465',y1: '1.477',x2: '-3.688',y2: '5.213',r: '6.6',serialLine: '',isBottom: 0},
+        // {StringNum: 4,x1: '-3.688',y1: '5.213',x2: '8.087',y2: '5.215',r: '6.7',serialLine: '',isBottom: 0},
+        // {StringNum: 5,x1: '8.087',y1: '5.215',x2: '8.784',y2: '0.928',r: '6.6',serialLine: '',isBottom: 0},
+        // {StringNum: 6,x1: '8.784',y1: '0.928',x2: '8.5',y2: '-0.65',r: '0',serialLine: '',isBottom: 0}
       ],
       // 需要编辑的属性
       editProp: ['X1', 'Y1','X2', 'Y2', 'R'],
@@ -200,19 +199,6 @@ export default {
     eventBus.$on('cuttingDc',(data)=>{
       this.cuttingObj.cuttingDc = data.cuttingDc/100;
     })
-    //云端文件导入回显
-    eventBus.$on('cloudFileHoles',(data)=>{
-      this.tableData = [];
-      if(data.outlineList!=null && data.outlineList.length!=0){
-        this.tableData = data.outlineList
-        this.timer = new Date().getTime()
-        this.buildLine();
-        // this.$refs.buildLines.$el.click()
-      }else{
-        this.timer = new Date().getTime()
-        this.buildLine();
-      }
-    });
   },
   methods: {
      handlePaste(event) {
@@ -285,9 +271,9 @@ export default {
     {
       this.tableData = msg;
     },
-    //获取添加的数据并返回至前端
+    //根据项目ID查询并绘制已保存的轮廓线
     buildLine(){
-      console.log(this.tableData)
+       console.log(this.tableData)
       // 获取项目ID
       this.projectId = cookie.get("projectId");
       this.cuttingObj.projectId = this.projectId;
@@ -303,18 +289,26 @@ export default {
       // 更新时间戳触发重绘
       this.timer = new Date().getTime()
 
-      // 调用后端API保存轮廓线数据
-      outlineApi.saveOutline(this.tableData).then(response => {
-        this.itemData = response.data
-        // 获取掏槽数量
-        return getCuttingNum.get_CuttingNum(this.cuttingObj);
-      }).then(response2=>{
-        this.cuttingNum = response2.data.data;
-        eventBus.$emit('cuNumUpdated',{cuttingNum:this.cuttingNum});
-      })
-      document.getElementById("buildLine").innerHTML= "已成功绘制轮廓线";
-      document.getElementById("buildLine").style.backgroundColor = "#79FDFF";
-      document.getElementById("buildLine").style.color = "#206686";
+      outlineApi.getOutlines(this.projectId).then(response => {
+        const outlineList = response.data && Array.isArray(response.data.data)
+          ? response.data.data
+          : (Array.isArray(response.data) ? response.data : []);
+        this.tableData = outlineList;
+        this.itemData = {data: outlineList};
+        this.timer = new Date().getTime();
+        console.log("轮廓线查询成功", outlineList);
+
+        const btn = document.getElementById("buildLine");
+        if (btn) {
+          btn.innerHTML = "已查询并绘制轮廓线";
+          btn.style.backgroundColor = "#79FDFF";
+          btn.style.color = "#206686";
+        }
+
+      }).catch((err) => {
+        console.error("轮廓线请求异常", err);
+        this.$message({message: '轮廓线查询失败', type: 'error'});
+      });
     },
 
     // 多选框选中数据
@@ -395,6 +389,7 @@ export default {
     }
   },
   mounted(){
+    this.buildLine();
     eventBus.$on('autoMode', (data)=>{
       if(data.autoStep == 1){
         this.buildLine()

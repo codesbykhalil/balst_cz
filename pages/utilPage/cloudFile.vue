@@ -279,12 +279,9 @@ const projectDetailFields = [
           }
           this.projectData = this.filterProjectDetail(projectDetail);
           this.projectData.type = this.getExcavationName(this.projectData.excavationCode);
-          return cloudFileApi.getAllHole(this.projectData.id);
-        }).then(response => {
-          const holesData = response.data.map;
           this.rewriteProjectIdCookie(this.projectData);
-          this.savePendingCloudData(this.projectData, holesData);
-          this.importToProjectPage(this.projectData, holesData);
+          this.savePendingCloudData(this.projectData);
+          this.importToProjectPage(this.projectData);
         }).catch(() => {
           this.$message({
             type: 'error',
@@ -296,15 +293,15 @@ const projectDetailFields = [
           this.loading = false;
         })
       },
-      importToProjectPage(projectData, holesData) {
+      importToProjectPage(projectData) {
         const targetPath = this.getTargetPath(projectData);
         if (!targetPath) {
-          this.emitCloudData(projectData, holesData);
+          this.emitCloudData(projectData);
           this.handleDialogClose();
           return;
         }
         if (this.normalizePath(this.$route.path) === this.normalizePath(targetPath)) {
-          this.emitCloudData(projectData, holesData);
+          this.emitCloudData(projectData);
           this.handleDialogClose();
           this.$message({
             type: 'success',
@@ -335,18 +332,17 @@ const projectDetailFields = [
         }
         return "";
       },
-      emitCloudData(projectData, holesData) {
+      emitCloudData(projectData) {
         eventBus.$emit('cloudFiles', projectData);
-        eventBus.$emit('cloudFileHoles', holesData);
       },
       rewriteProjectIdCookie(projectData) {
         if (projectData && projectData.id) {
           cookie.set("projectId", projectData.id);
         }
       },
-      savePendingCloudData(projectData, holesData) {
+      savePendingCloudData(projectData) {
         sessionStorage.setItem("pendingCloudProject", JSON.stringify(projectData));
-        sessionStorage.setItem("pendingCloudHoles", JSON.stringify(holesData));
+        sessionStorage.removeItem("pendingCloudHoles");
       },
       emitPendingCloudData() {
         const projectData = sessionStorage.getItem("pendingCloudProject");

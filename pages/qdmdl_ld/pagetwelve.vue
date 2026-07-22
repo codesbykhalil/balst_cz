@@ -156,6 +156,7 @@ export default {
     },
   },
   mounted() {
+    this.calculate();
     eventBus.$on('autoMode', (data)=>{
       if(data.autoStep == 5){
         setTimeout(() => {

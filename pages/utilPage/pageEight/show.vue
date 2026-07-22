@@ -180,10 +180,32 @@ export default {
     },
 
     render() {
-      this.renderer.render(this.scene, this.camera);
+      if (this.renderer && this.scene && this.camera) {
+        this.renderer.render(this.scene, this.camera);
+      }
     },
     parseNum(str) {
       return parseFloat(str);
+    },
+
+    getOutlineData() {
+      const data = this.itemData && this.itemData.data;
+      return Array.isArray(data) ? data : [];
+    },
+
+    drawCurrentOutline() {
+      if (!this.scene) {
+        return;
+      }
+
+      const pathData = this.getOutlineData();
+      if (pathData.length === 0) {
+        this.render();
+        return;
+      }
+
+      this.drawShape(pathData);
+      this.render();
     },
 
     getMidpoint(x1, y1, x2, y2) {
@@ -221,6 +243,10 @@ export default {
     // 绘制形状的主要方法
     // pathData: 包含形状轮廓数据的数组，每个元素包含起点(x1,y1)、终点(x2,y2)和半径(r)
     drawShape(pathData) {
+      if (!Array.isArray(pathData) || pathData.length === 0) {
+        return;
+      }
+
       // 创建一个新的THREE.Shape对象，用于定义2D形状
       this.shape = new THREE.Shape();
 
@@ -244,13 +270,15 @@ export default {
           // 优先使用接口返回的圆心、起始角和角度差。
           // 轮廓数据固定按顺时针输入，因此从起始角减去角度差得到结束角；
           // angleDifference 小于 PI 时绘制短弧，大于 PI 时绘制长弧。
-          const hasApiArcParams = [
-            segment.arcCenterX,
-            segment.arcCenterY,
-            segment.startAngle,
-            segment.endAngle,
-            segment.angleDifference
-          ].every((value) => value !== null && value !== undefined && Number.isFinite(this.parseNum(value)));
+          const hasApiArcParams = radius > 0
+            && [
+                segment.arcCenterX,
+                segment.arcCenterY,
+                segment.startAngle,
+                segment.endAngle,
+                segment.angleDifference
+              ].every((value) => value !== null && value !== undefined && Number.isFinite(this.parseNum(value)))
+            && Math.abs(this.parseNum(segment.angleDifference)) > 0.001;
 
           let centerX;
           let centerY;
@@ -334,11 +362,9 @@ export default {
   watch: {
     itemData: {
       handler(newV) {
+        console.log("itemData changed:", newV);
         this.getFatherData = newV;
-        if (this.getFatherData?.data) {
-          this.drawShape(this.getFatherData.data);
-        }
-        this.render();
+        this.drawCurrentOutline();
       },
       deep: true,
     },
@@ -374,7 +400,7 @@ export default {
 
   mounted() {
     this.init();
-    this.render();
+    this.drawCurrentOutline();
   },
 };
 </script>

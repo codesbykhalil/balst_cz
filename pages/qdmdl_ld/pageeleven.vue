@@ -143,69 +143,73 @@ export default {
         },1000);
       }
     })
-    //云端文件导入回显
-      eventBus.$on('cloudFileHoles',(data)=>{
-        if(data.auxiliaryHole!=null && data.auxiliaryHole.length!=0){
-          this.auxDc = data.auxiliaryHole[0].auxDc*1000;
-          this.ratioRow = data.auxiliaryHole[0].ratioRow;
-          this.ratioSpacing = data.auxiliaryHole[0].ratioSpacing;
-          this.projectId = cookie.get("projectId");
-
-          this.verticesMir=[]
-          this.tubeMir=[]
-          this.auxHoleDataMir=[]
-          this.timer = new Date().getTime()
-          Promise.all([
-            cuttingApi.getCuttingHoles(this.projectId),
-            surroundingHolesApi.readSurrounding(this.projectId),
-            auxiliaryHolesApi.readAuxHoles(this.projectId)
-          ]).then(([cuttingResponse, surroundingResponse, auxiliaryResponse]) => {
-            const verticesMir = []
-            const tubeMir = []
-            const auxHoleDataMir = []
-
-            this.cuttingHoles = cuttingResponse.data.data || [];
-            this.cuttingHoles.forEach((item) => {
-              verticesMir.push(item.x1,item.y1,0.0)
-              tubeMir.push({x1:item.x1,y1:item.y1,z1:0,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:1,rolling_count:item.rolling_count})
-            })
-
-            this.surroundingHoles = surroundingResponse.data.data || [];
-            this.surroundingHoles.forEach((item) => {
-              verticesMir.push(item.x1,item.y1,0.0)
-              tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:2})
-            })
-
-            const datas = auxiliaryResponse.data.data || [];
-            datas.forEach((item, index) => {
-              verticesMir.push(item.x1,item.y1,0.0)
-              tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:3})
-              auxHoleDataMir.push({
-                holeNum:'孔'+(index + 1), x1:item.x1, y1:item.y1,z1:item.z1, x2:item.x2, y2:item.y2,
-                z2:item.z2,
-              })
-            })
-
-            this.verticesMir = verticesMir;
-            this.tubeMir = tubeMir;
-            this.auxHoleDataMir = auxHoleDataMir;
-            this.vertices = verticesMir;
-            this.tube = tubeMir;
-            this.auxHoleData = auxHoleDataMir;
-            eventBus.$emit('cloudFileHolesRendered');
-          })
-        }else{
-          this.timer = new Date().getTime();
-          eventBus.$emit('cloudFileHolesRendered');
-        }
-      });
   },
-  beforeDestroy() {
-    eventBus.$off('cloudFileHoles');
+  mounted() {
+    this.loadHoleData();
   },
   methods:{
     cellStyle1({ row, column, rowIndex, columnIndex }) {
       return "height:520px!important; border:1px solid rgba(35,73,109,1)!important;border-bottom:none; color:#FFFFFF!important; padding-left:0px!important;background-color:#011635;";
+    },
+    //进入设计页时仅通过查询接口回显已有炮孔
+    loadHoleData(){
+      this.projectId = cookie.get("projectId");
+      if (!this.projectId) {
+        eventBus.$emit('cloudFileHolesRendered');
+        return;
+      }
+
+      this.verticesMir=[]
+      this.tubeMir=[]
+      this.auxHoleDataMir=[]
+      this.timer = new Date().getTime()
+      Promise.all([
+        cuttingApi.getCuttingHoles(this.projectId),
+        surroundingHolesApi.readSurrounding(this.projectId),
+        auxiliaryHolesApi.readAuxHoles(this.projectId)
+      ]).then(([cuttingResponse, surroundingResponse, auxiliaryResponse]) => {
+        const verticesMir = []
+        const tubeMir = []
+        const auxHoleDataMir = []
+
+        this.cuttingHoles = cuttingResponse.data.data || [];
+        this.cuttingHoles.forEach((item) => {
+          verticesMir.push(item.x1,item.y1,0.0)
+          tubeMir.push({x1:item.x1,y1:item.y1,z1:0,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:1,rolling_count:item.rolling_count})
+        })
+
+        this.surroundingHoles = surroundingResponse.data.data || [];
+        this.surroundingHoles.forEach((item) => {
+          verticesMir.push(item.x1,item.y1,0.0)
+          tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:2})
+        })
+
+        const datas = auxiliaryResponse.data.data || [];
+        if (datas.length !== 0) {
+          this.auxDc = datas[0].auxDc*1000;
+          this.ratioRow = datas[0].ratioRow;
+          this.ratioSpacing = datas[0].ratioSpacing;
+        }
+        datas.forEach((item, index) => {
+          verticesMir.push(item.x1,item.y1,0.0)
+          tubeMir.push({x1:item.x1,y1:item.y1,z1:item.z1,x2:item.x2,y2:item.y2,z2:item.z2,tubeNum:3})
+          auxHoleDataMir.push({
+            holeNum:'孔'+(index + 1), x1:item.x1, y1:item.y1,z1:item.z1, x2:item.x2, y2:item.y2,
+            z2:item.z2,
+          })
+        })
+
+        this.verticesMir = verticesMir;
+        this.tubeMir = tubeMir;
+        this.auxHoleDataMir = auxHoleDataMir;
+        this.vertices = verticesMir;
+        this.tube = tubeMir;
+        this.auxHoleData = auxHoleDataMir;
+        eventBus.$emit('cloudFileHolesRendered');
+      }).catch(() => {
+        this.$message({message: '炮孔数据查询失败', type: 'error'});
+        eventBus.$emit('cloudFileHolesRendered');
+      })
     },
     //计算辅助孔
     calculate(){

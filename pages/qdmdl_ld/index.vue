@@ -27,7 +27,8 @@
             </div>
             <div class="left_project">
               <div class="bg_project">
-                <span class="bg_text" @click="openData">打开云端文件</span>
+                <!-- 暂停“打开云端文件”功能：不再绑定 openData 方法 -->
+                <span class="bg_text">打开云端文件</span>
               </div>
               <div class="bg_project" style="margin-left: 20px">
                 <span class="bg_text" @click="openLog">打开服务日志</span>

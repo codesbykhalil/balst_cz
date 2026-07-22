@@ -125,6 +125,7 @@ export default {
     })
   },
   mounted(){
+    this.predict2();
     eventBus.$on('autoMode', (data)=>{
       if(data.autoStep == 7){
         setTimeout(() => {
