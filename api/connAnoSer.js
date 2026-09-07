@@ -26,7 +26,7 @@ export default{
     info_Verify(userData){
         return request({
             url: `/get_topic_4_info_verify/`,
-            baseURL:'https://www.znfj.top:8443/api',
+            baseURL:'http://220.167.89.71:9981/api',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded;'
              },
@@ -38,7 +38,7 @@ export default{
     get_Info(workData,token){
         return request({
             url: `/get_topic_4_info/`,
-            baseURL:'https://www.znfj.top:8443/api',
+            baseURL:'http://220.167.89.71:9981/api',
             data: workData,
             headers: {
                 'authorization': token
@@ -50,7 +50,7 @@ export default{
     get_Data(workData){
         return request({
             url: `/get_topic_4_data/`,
-            baseURL:'https://www.znfj.top:8443/api',
+            baseURL:'http://220.167.89.71:9981/api',
             data: workData,
             headers: {
                 'Authorization': '85A1AC7C1F3430D8'
